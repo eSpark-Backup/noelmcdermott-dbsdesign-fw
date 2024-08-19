@@ -6,12 +6,15 @@
 #define R_SENSE                          0.11f
 #define MAX_VOLT_V14                     3.3f
 #define MIN_VOLT_V14                     0
+#define HAL_SENSOR_CON_RPM_V8
+#define V7_CONV_AFR_V73
 
 // Declare the variables as extern
 extern int OVER_CURRENT_V17;
 extern int OVER_RATING_V18;
 extern int CONV_CURRENT_V14;
 extern int CONV_VOLTAGE_V14;
+
 // In one of your source files
 
 

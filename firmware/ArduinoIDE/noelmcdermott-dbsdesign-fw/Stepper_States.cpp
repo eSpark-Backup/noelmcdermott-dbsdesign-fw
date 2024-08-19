@@ -7,7 +7,7 @@ void StepperState::homingState()
 {
 }
 
-void StepperState::setup()
+void StepperState::setup(Display *dis)
 {
       // Setup the TMC2160 driver
     SPI.begin(); // Initialize SPI
@@ -23,6 +23,8 @@ void StepperState::setup()
 void StepperState::run()
 {
 float currentInput = milli_Conv.current_mA();
+float voltageInput = milli_Conv.voltage_V();
+
 if (currentInput >= 4.0f && currentInput < 20.0f) {
         // Move clockwise
         moveClockwise();
@@ -31,7 +33,18 @@ else if (currentInput > 20.0f && currentInput <= 40.0f) {
        // Move anticlockwise
         moveAnticlockwise();
     }
- 
+
+        /* Display the result*/
+        
+    display->show("Mode = Run ", 1);
+        String message1 = "MICROSQUIRT INPUT = " + String(voltageInput, 2) + "V";
+    display->show(message1, 2);
+        String message2 = "RPM = " + String(HAL_SENSOR_CON_RPM_V8);                              // NEED TO CALCULATE AND IMPLEMENTATION
+    display->show(message2, 3);
+    String message3 = "A/F = " + String(V7_CONV_AFR_V73);                                     // NEED TO CALCULATE AND IMPLEMENTATION 
+    display->show(message3, 4);
+
+
 }
 void StepperState::moveClockwise() {
     driver.shaft(1); // Set direction to clockwise
@@ -59,6 +72,7 @@ void StepperState::moveAnticlockwise() {
 
 void StepperState::test()
 {
+/*implementation of Test Mode*/
 
 }
 
@@ -81,6 +95,11 @@ bool StepperState::overCurrentEvent() {
         OVER_CURRENT_V17 = false; // Set to false otherwise
     }
     return OVER_CURRENT_V17;  // Return the boolean indicating overcurrent status
+}
+
+bool StepperState::outOfRangEvent() {
+/*implementation out of range event*/
+return false;
 }
 
 void StepperState::stopStepper()

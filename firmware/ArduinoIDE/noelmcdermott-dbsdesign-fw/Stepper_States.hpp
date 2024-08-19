@@ -5,6 +5,7 @@
 #include"AnalogEvent.hpp"
 #include <TMCStepper.h>
 #include "variable_init.hpp"
+#include"DISPLAY.hpp"
 
        
 
@@ -16,7 +17,7 @@ extern TMC2160Stepper driver;
 class StepperState
 {
   public:
-  void setup();
+  void setup(Display *dis);
   void homingState();
   void run();
   void test();
@@ -26,7 +27,10 @@ class StepperState
   void moveAnticlockwise() ;
   void stopStepper();
   void enableStepper();
+  bool outOfRangEvent();
   // void overCurrentEvent();
   // float getMotorCurrent();
+   private:
+  Display *display;
 
 };

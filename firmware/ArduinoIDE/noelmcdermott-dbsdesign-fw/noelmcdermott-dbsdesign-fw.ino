@@ -4,38 +4,39 @@
 #include "EVENTS.hpp"  
 #include "Stepper_States.hpp"
 #include "variable_init.hpp"
+#include"DISPLAY.hpp"
+#include"ERROR_HANDLER.hpp"
 
 DBS_LED Led;
 StepperState motor;
 Events event;
+Display show;
+ErrorHandler errorHandler;
 
-unsigned long lastPressTime = 0;
-unsigned long lastButtonPress = 0;
-const unsigned long DOUBLE_PRESS_INTERVAL = 2000; // 2 seconds
-bool resetPressed = false;
 
 void setup()
 
  {
-  event.setup();
+  show.init();
+  event.setup(&show);
   Led.setup();
-  motor.setup();
+  motor.setup(&show);
   motor.overCurrentEvent();
+  motor.outOfRangEvent();
+  delay(20000);
 }
 
 void loop() {
-  delay(20000);
-
   /* check over current and out of range event flag is high */
 if ((OVER_CURRENT_V17 == 1) || (OVER_RATING_V18 == 1)) {
     motor.stopStepper();
     event.errorEvents();
+    if(errorHandler.checkResetButton() == 1)
+    {
+      event.resetErrorEvent();
+    }
+  } 
 
-   /*implement button press twice time */
-
-   /*implement the reset functionality*/
-   event.resetErrorEvent();
-  }
 else {
     motor.enableStepper();
      }
@@ -43,12 +44,14 @@ else {
   /*  check the mode "Run" or "Test"  */
 
   if (MODE_SELECT_V12 == 1) {
+  /*Run Mode*/
     motor.homingState();
     delay(1000);
     motor.run();
   }
 
   else if (MODE_SELECT_V12 == 0) {
+    /*Test mode */
     motor.test();
   }
 }
