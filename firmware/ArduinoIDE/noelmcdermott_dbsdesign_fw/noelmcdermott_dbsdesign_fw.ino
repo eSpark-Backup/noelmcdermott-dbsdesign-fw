@@ -1,22 +1,22 @@
 #include <Arduino.h>
 #include <TMCStepper.h>
 #include "LED.hpp"
-#include "EVENTS.hpp"  
+#include "EVENTS.hpp"
 #include "Stepper_States.hpp"
 #include "variable_init.hpp"
-#include"DISPLAY.hpp"
-#include"ERROR_HANDLER.hpp"
+#include "DISPLAY.hpp"
+#include "ERROR_HANDLER.hpp"
+#include "BUTTON.hpp"
 
 DBS_LED Led;
 StepperState motor;
 Events event;
 Display show;
 ErrorHandler errorHandler;
-
-
+Button mode(MODE_SELECT_V12);
 void setup()
 
- {
+{
   show.init();
   event.setup(&show);
   Led.setup();
@@ -28,29 +28,28 @@ void setup()
 
 void loop() {
   /* check over current and out of range event flag is high */
-if ((OVER_CURRENT_V17 == 1) || (OVER_RATING_V18 == 1)) {
+  if (errorHandler.isError()) {
     motor.stopStepper();
     event.errorEvents();
-    if(errorHandler.checkResetButton() == 1)
-    {
+    if (errorHandler.checkResetButton() == 1) {
       event.resetErrorEvent();
     }
-  } 
+  }
 
-else {
+  else {
     motor.enableStepper();
-     }
+  }
 
   /*  check the mode "Run" or "Test"  */
 
-  if (MODE_SELECT_V12 == 1) {
-  /*Run Mode*/
+  if (mode.read() == 1) {
+    /*Run Mode*/
     motor.homingState();
     delay(1000);
     motor.run();
   }
 
-  else if (MODE_SELECT_V12 == 0) {
+  else if (mode.read() == 0) {
     /*Test mode */
     motor.test();
   }
