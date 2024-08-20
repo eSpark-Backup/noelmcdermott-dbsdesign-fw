@@ -1,12 +1,15 @@
 #include "Stepper_States.hpp"
 
+
 TMC2160Stepper driver(CS_PIN, R_SENSE);
 MilliAmp_Conv converter;
+// Encoder encoder;
+
 
 void StepperState::homingState() {
 }
 
-void StepperState::setup(Display *dis) {
+void StepperState::setup(Display *dis, Encoder *enc) {
   // Setup the TMC2160 driver
   SPI.begin();                 // Initialize SPI
   driver.begin();              // Initialize driver with default settings
@@ -16,6 +19,17 @@ void StepperState::setup(Display *dis) {
   driver.pwm_autoscale(true);  // Enable autoscaling of PWM frequency
 }
 
+void StepperState::test() {
+  /*implementation of Test Mode*/
+  ENCODER_VAL_IN_VOLT_V13 = encoder->getEncoderValue();
+  if(ENCODER_VAL_IN_VOLT_V13 == V7_CONV_AFR_V73)
+  {
+    /*Stop encoder*/
+  }
+  else{
+    
+  }
+}
 
 /*RUN MODE*/
 void StepperState::run() {
@@ -63,9 +77,7 @@ void StepperState::moveAnticlockwise() {
   }
 }
 
-void StepperState::test() {
-  /*implementation of Test Mode*/
-}
+
 
 float StepperState::getMotorCurrent() {
   uint8_t cs_actual = driver.cs_actual();  // Current scale (0-31)

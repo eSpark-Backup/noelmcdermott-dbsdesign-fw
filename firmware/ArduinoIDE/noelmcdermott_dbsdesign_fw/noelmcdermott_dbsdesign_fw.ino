@@ -7,11 +7,13 @@
 #include "DISPLAY.hpp"
 #include "ERROR_HANDLER.hpp"
 #include "BUTTON.hpp"
+#include "ENCODER.hpp"
 
 DBS_LED Led;
 StepperState motor;
 Events event;
 Display show;
+Encoder encodr;
 ErrorHandler errorHandler;
 Button mode(MODE_SELECT_V12);
 void setup()
@@ -20,9 +22,10 @@ void setup()
   show.init();
   event.setup(&show);
   Led.setup();
-  motor.setup(&show);
+  motor.setup(&show, &encodr);
   motor.overCurrentEvent();
   motor.outOfRangEvent();
+  encodr.setup();
   delay(20000);
 }
 

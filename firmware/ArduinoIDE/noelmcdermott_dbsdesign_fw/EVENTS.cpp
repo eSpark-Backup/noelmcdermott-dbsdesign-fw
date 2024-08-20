@@ -5,7 +5,6 @@ int OVER_RATING_V18 = 0;
 
 void Events::setup(Display *dis) {
   display = dis;
-  pinMode(MODE_SELECT_V12, INPUT);
   pinMode(LIMIT_SWITCH, INPUT);
   pinMode(RESET_V9, INPUT);
 }

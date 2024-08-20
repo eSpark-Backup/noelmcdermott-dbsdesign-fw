@@ -5,9 +5,10 @@
 #include "CONVERSION.hpp"
 #include <TMCStepper.h>
 #include "variable_init.hpp"
-#include"DISPLAY.hpp"
+#include "DISPLAY.hpp"
+#include "ENCODER.hpp"
 
-       
+class Encoder;       
 
 #define MAX_DRIVER_CURRENT_V16           20           //(20mA) maximum allowable driver current
 
@@ -17,7 +18,7 @@ extern TMC2160Stepper driver;
 class StepperState
 {
   public:
-  void setup(Display *dis);
+  void setup(Display *dis, Encoder *enc);
   void homingState();
   void run();
   void test();
@@ -32,5 +33,7 @@ class StepperState
   // float getMotorCurrent();
    private:
   Display *display;
+  Encoder *encoder;
+  float ENCODER_VAL_IN_VOLT_V13;
 
 };
