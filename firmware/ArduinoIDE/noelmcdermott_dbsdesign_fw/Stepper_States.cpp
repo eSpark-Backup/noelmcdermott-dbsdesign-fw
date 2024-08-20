@@ -22,12 +22,9 @@ void StepperState::setup(Display *dis, Encoder *enc) {
 void StepperState::test() {
   /*implementation of Test Mode*/
   ENCODER_VAL_IN_VOLT_V13 = encoder->getEncoderValue();
-  if(ENCODER_VAL_IN_VOLT_V13 == V7_CONV_AFR_V73)
-  {
+  if (ENCODER_VAL_IN_VOLT_V13 == V7_CONV_AFR_V73) {
     /*Stop encoder*/
-  }
-  else{
-    
+  } else {
   }
 }
 
