@@ -7,11 +7,12 @@
 class ErrorHandler {
 public:
   bool isError();
-  bool checkResetButton();
+  bool checkResetButton(int pin);
 
 private:
   int buttonState;                  // Current state of the button
   int lastButtonState = LOW;        // Previous state of the button
   unsigned long lastPressTime = 0;  // Time of the last button press
   int pressCount = 0;
+  
 };

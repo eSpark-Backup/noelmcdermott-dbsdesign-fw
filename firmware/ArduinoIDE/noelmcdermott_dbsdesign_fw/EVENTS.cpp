@@ -7,6 +7,7 @@ void Events::setup(Display *dis) {
   display = dis;
   pinMode(LIMIT_SWITCH, INPUT);
   pinMode(RESET_V9, INPUT);
+  pinMode(ENCODER_BUTTON,INPUT);
 }
 
 void Events::errorEvents() {

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <TMCStepper.h>
+#include <RotaryEncoder.h>
 #include "LED.hpp"
 #include "EVENTS.hpp"
 #include "Stepper_States.hpp"
@@ -8,6 +9,7 @@
 #include "ERROR_HANDLER.hpp"
 #include "BUTTON.hpp"
 #include "ENCODER.hpp"
+
 
 DBS_LED Led;
 StepperState motor;
@@ -22,7 +24,7 @@ void setup()
   show.init();
   event.setup(&show);
   Led.setup();
-  motor.setup(&show, &encodr);
+  motor.setup(&show, &encodr, &errorHandler);
   motor.overCurrentEvent();
   motor.outOfRangEvent();
   encodr.setup();
@@ -34,7 +36,7 @@ void loop() {
   if (errorHandler.isError()) {
     motor.stopStepper();
     event.errorEvents();
-    if (errorHandler.checkResetButton() == 1) {
+    if (errorHandler.checkResetButton(RESET_V9) == 1) {
       event.resetErrorEvent();
     }
   }

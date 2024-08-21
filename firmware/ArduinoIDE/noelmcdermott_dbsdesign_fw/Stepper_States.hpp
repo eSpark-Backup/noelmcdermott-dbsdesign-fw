@@ -7,8 +7,10 @@
 #include "variable_init.hpp"
 #include "DISPLAY.hpp"
 #include "ENCODER.hpp"
+#include "ERROR_HANDLER.hpp"
 
-class Encoder;       
+class Encoder;
+class ErrorHandler;      
 
 #define MAX_DRIVER_CURRENT_V16           20           //(20mA) maximum allowable driver current
 
@@ -18,7 +20,7 @@ extern TMC2160Stepper driver;
 class StepperState
 {
   public:
-  void setup(Display *dis, Encoder *enc);
+  void setup(Display *dis, Encoder *enc, ErrorHandler *error);
   void homingState();
   void run();
   void test();
@@ -31,9 +33,12 @@ class StepperState
   bool outOfRangEvent();
   // void overCurrentEvent();
   // float getMotorCurrent();
-   private:
+  private:
   Display *display;
   Encoder *encoder;
+  ErrorHandler *errorHand;
   float ENCODER_VAL_IN_VOLT_V13;
+  unsigned long soundTimer;
+  int CURRENT_POSITION_FROM_HOME_V5 = 0;
 
 };

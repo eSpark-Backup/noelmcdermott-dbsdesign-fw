@@ -6,9 +6,9 @@ bool ErrorHandler::isError() {
   return ((OVER_CURRENT_V17 == 1) || (OVER_RATING_V18 == 1));
 }
 
-bool ErrorHandler::checkResetButton() {
+bool ErrorHandler::checkResetButton(int pin) {
   while (true) {
-    buttonState = digitalRead(RESET_V9);
+    buttonState = digitalRead(pin);
     if (buttonState == HIGH && lastButtonState == LOW) {
       // Button was pressed
       unsigned long currentTime = millis();

@@ -11,9 +11,10 @@
 #define MODE_SELECT_V12                 6               //mode selection switch state (“Run” = 1, “Test” = 0)
 #define EXTERNAL_INPUT                  1               //EXTERNAL INPUT
 #define LIMIT_SWITCH                    47               //LIMIT SWITCH                                 //pin left
-#define RESET_V9                        48               //RESET PUSH BUTTTON                           
-#define OUT_A                           2
-#define OUT_B                           21
+#define RESET_V9                        48               //RESET PUSH BUTTTON                     
+#define ENCODER_BUTTON                  46               // NEED TO CONFIRM THE BUTTON 
+// #define ENCODER_OUT_A                   2
+// #define ENCODER_OUT_B                   21
 
 // typedef struct event {
 //   int v1, v2, v3;
