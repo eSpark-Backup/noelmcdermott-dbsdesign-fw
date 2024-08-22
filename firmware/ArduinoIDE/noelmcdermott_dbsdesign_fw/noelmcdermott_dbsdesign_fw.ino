@@ -44,17 +44,13 @@ void loop() {
   else {
     motor.enableStepper();
   }
-
   /*  check the mode "Run" or "Test"  */
-
   if (mode.read() == 1) {
     /*Run Mode*/
-    motor.homingState();
+    motor.homePosition();
     delay(1000);
     motor.run();
-  }
-
-  else if (mode.read() == 0) {
+  } else if (mode.read() == 0) {
     /*Test mode */
     motor.test();
   }

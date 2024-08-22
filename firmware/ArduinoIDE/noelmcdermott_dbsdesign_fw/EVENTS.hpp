@@ -12,7 +12,8 @@
 #define EXTERNAL_INPUT                  1               //EXTERNAL INPUT
 #define LIMIT_SWITCH                    47               //LIMIT SWITCH                                 //pin left
 #define RESET_V9                        48               //RESET PUSH BUTTTON                     
-#define ENCODER_BUTTON                  46               // NEED TO CONFIRM THE BUTTON 
+#define ENCODER_BUTTON                  46               // ASSUME, NEED TO CONFIRM THE BUTTON 
+#define HALL_SENSOR_PIN                  47              // ASSUME, NEED TO CONFIRM 
 // #define ENCODER_OUT_A                   2
 // #define ENCODER_OUT_B                   21
 
