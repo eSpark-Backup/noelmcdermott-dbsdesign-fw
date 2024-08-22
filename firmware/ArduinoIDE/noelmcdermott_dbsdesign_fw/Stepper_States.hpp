@@ -42,6 +42,7 @@ private:
   unsigned long soundTimer;
   int CURRENT_POSITION_FROM_HOME_V5 = 0;
   int HOME_POSITION_V2_5 = 0;
+  int HAL_SENSOR_CON_RPM_V8 = 0;
   // static volatile unsigned long pulseCount; // To store the number of pulses
   static int pulseCount;
   unsigned long lastTime = 0;

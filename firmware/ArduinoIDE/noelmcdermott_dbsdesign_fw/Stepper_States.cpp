@@ -95,7 +95,8 @@ void StepperState::test() {
         digitalWrite(TEST_LED, LOW);         // Turn off Amber LED
         digitalWrite(GREEN_LED, HIGH);       // Turn on Green LED
       }
-
+        
+      HAL_SENSOR_CON_RPM_V8 = StepperState::rpmStepper();
       /*Display*/
       display->show(". Mode = TEST", 1);
       String message1 = "ENCODER INPUT = " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
@@ -160,6 +161,8 @@ void StepperState::run() {
       digitalWrite(TEST_LED, LOW);
       digitalWrite(KILL_RELAY_V10, LOW);
     }
+
+    HAL_SENSOR_CON_RPM_V8 = StepperState::rpmStepper();
 
     display->show("Mode = Run ", 1);
     String message1 = "MICROSQUIRT INPUT = " + String(voltageInput, 2) + "V";
