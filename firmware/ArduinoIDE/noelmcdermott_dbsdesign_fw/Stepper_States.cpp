@@ -33,8 +33,6 @@ int StepperState::rpmStepper() {
   return rpm;
 }
 
-
-
 void StepperState::homePosition() {
 
   moveAnticlockwise(FAST_SPEED_V2_1);
@@ -118,6 +116,7 @@ void StepperState::test() {
       digitalWrite(RUN_LED, LOW);
 
       /*Display result*/
+      display->clear();
       if (ENCODER_VAL_IN_VOLT_V13 == MIN_VOLT_V14) {
         String message1 = "ENCODER INPUT = " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
         display->show(message1, 1);
@@ -163,7 +162,7 @@ void StepperState::run() {
     }
 
     HAL_SENSOR_CON_RPM_V8 = StepperState::rpmStepper();
-
+    display->clear();
     display->show("Mode = Run ", 1);
     String message1 = "MICROSQUIRT INPUT = " + String(voltageInput, 2) + "V";
     display->show(message1, 2);

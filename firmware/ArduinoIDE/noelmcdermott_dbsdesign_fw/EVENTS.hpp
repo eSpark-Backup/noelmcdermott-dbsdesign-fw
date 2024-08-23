@@ -6,8 +6,6 @@
 #include "variable_init.hpp"
 #include"DISPLAY.hpp"
 
-
-
 #define MODE_SELECT_V12                 6               //mode selection switch state (“Run” = 1, “Test” = 0)
 #define EXTERNAL_INPUT                  1               //EXTERNAL INPUT
 #define LIMIT_SWITCH                    47               //LIMIT SWITCH                                 //pin left

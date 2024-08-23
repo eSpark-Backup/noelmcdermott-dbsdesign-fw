@@ -20,6 +20,5 @@
 class DBS_LED
 {
   public:
-    void init();
     void setup();
 };  

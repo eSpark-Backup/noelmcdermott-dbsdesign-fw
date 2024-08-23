@@ -8,6 +8,5 @@ void Button::setup() {
 }
 
 bool Button::read() {
-  int reading = digitalRead(pin);
-  return reading;  // Return true if button is pressed
+  return digitalRead(pin);  // Return true if button is pressed
 }

@@ -18,8 +18,8 @@ Display show;
 Encoder encodr;
 ErrorHandler errorHandler;
 Button mode(MODE_SELECT_V12);
-void setup()
 
+void setup()
 {
   show.init();
   event.setup(&show);

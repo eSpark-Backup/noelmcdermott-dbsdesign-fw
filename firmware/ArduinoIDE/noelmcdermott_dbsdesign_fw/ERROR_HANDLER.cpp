@@ -1,5 +1,4 @@
-
-
+ 
 #include "ERROR_HANDLER.hpp"
 
 bool ErrorHandler::isError() {

@@ -44,7 +44,7 @@ void Events::errorEvents() {
     display->show("MANUAL RESET REQD", 3);
     display->show("DRIVER POWER IS OFF", 4);
     delay(3000);
-    display->clearLCD();
+    display->clear();
     display->show("E1:OVERCURRENT", 1);
     display->show("MANUAL RESET REQD", 2);
     display->show("TURN MASTER PWR OFF", 3);
@@ -56,7 +56,7 @@ void Events::errorEvents() {
     display->show("MANUAL RESET REQD", 3);
     display->show("DRIVER POWER IS OFF", 4);
     delay(3000);
-    display->clearLCD();
+    display->clear();
     display->show("CRITICAL FAULT", 1);
     display->show("MANUAL RESET REQD", 2);
     display->show("TURN MASTER PWR OFF", 3);
@@ -84,7 +84,7 @@ void Events::resetErrorEvent() {
   digitalWrite(GREEN_LED, HIGH);
 
   /*DISPALY MESSAGE */
-  display->clearLCD();
+  display->clear();
   delay(1000);
   display->show("NORMAL OPERATION", 1);
   display->show("SELECT MODE RUN/TEST", 2);

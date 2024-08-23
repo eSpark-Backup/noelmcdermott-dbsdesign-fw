@@ -6,7 +6,6 @@
 #define R_SENSE 0.11f
 #define MAX_VOLT_V14  3.3f
 #define MIN_VOLT_V14  0
-
 #define V7_CONV_AFR_V73  0
 #define CLOCKWISE_STEP_FROM_HOME_V3   500          // ASSUME
 #define MAX_NUMB_STEP_FROM_HOME_V4    2000         // ASSUME

@@ -13,7 +13,6 @@ class Encoder;
 class ErrorHandler;
 
 #define MAX_DRIVER_CURRENT_V16 20  //(20mA) maximum allowable driver current
-
 // extern MilliAmp_Conv milli_Conv;
 extern TMC2160Stepper driver;
 

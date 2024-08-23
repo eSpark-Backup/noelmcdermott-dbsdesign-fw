@@ -3,7 +3,6 @@
 #include <Arduino.h>
 #include "EVENTS.hpp"
 
-
 class ErrorHandler {
 public:
   bool isError();

@@ -15,7 +15,13 @@ void Display::show(const String &message, int line) {
     lcd.setCursor(0, line);     // Set cursor to the specified line
     lcd.print(message);         // Print the message
   }
+
+  //For testing
+  #if SERIAL_TEST
+  Serial.println(message);
+  #endif
+  
 }
-void Display::clearLCD() {
+void Display::clear() {
   lcd.clear();
 }
