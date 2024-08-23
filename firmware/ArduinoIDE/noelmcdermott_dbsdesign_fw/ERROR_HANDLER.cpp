@@ -26,7 +26,6 @@ bool ErrorHandler::checkResetButton(int pin) {
     lastButtonState = buttonState;
 
     if (pressCount == 2) {
-
       /*implement the reset functionality*/
       pressCount = 0;  // Reset count after action
       break;

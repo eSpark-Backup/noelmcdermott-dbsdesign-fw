@@ -54,9 +54,8 @@ void StepperState::test() {
   ENCODER_VAL_IN_VOLT_V13 = MIN_VOLT_V14;
   while (digitalRead(MODE_SELECT_V12) == 0) {
     ENCODER_VAL_IN_VOLT_V13 = encoder->getEconderVoltage();
-    if (errorHand->checkResetButton(ENCODER_BUTTON) == 1)  // press button for two second
+    if (errorHand->checkResetButton(RESET_V9) == 1)  // press button for two second
     {
-
       digitalWrite(KILL_RELAY_V10, LOW);
       noTone(BUZZER_PIN);
       noTone(TEST_LED);
@@ -80,7 +79,6 @@ void StepperState::test() {
           digitalWrite(STEP_PIN, LOW);
           delayMicroseconds(1000000 / ROTATION_SPEED_STEP_PR_SEC_V6);
         }
-
         CURRENT_POSITION_FROM_HOME_V5 = targetPosition;  // Update current position to targetPosition
       }
       if (StepperState::outOfRangEvent() == 0) {
@@ -194,7 +192,6 @@ void StepperState::moveAnticlockwise(int speed) {
     delayMicroseconds(1000000 / speed);
   }
 }
-
 
 
 float StepperState::getMotorCurrent() {
