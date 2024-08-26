@@ -18,6 +18,6 @@ public:
   float readExternalInput(Scale scale);
 private:
   float sensorValue;
-  float CONV_CURRENT_V14;
-  float CONV_VOLTAGE_V14;
+  float current = 0;
+  float volatge = 0;
 };

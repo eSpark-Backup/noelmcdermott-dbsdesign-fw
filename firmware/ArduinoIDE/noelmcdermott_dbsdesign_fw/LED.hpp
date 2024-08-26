@@ -16,6 +16,7 @@
   #define SW_MOSI             13 // Software Master Out Slave In (MOSI)
   #define SW_MISO             12 // Software Master In Slave Out (MISO)
   #define SW_SCK              14 // Software Slave Clock (SCK)
+  #define LAMBDA_CS1_PIN      16  // CS pin for lambda sheet
   
 class DBS_LED
 {

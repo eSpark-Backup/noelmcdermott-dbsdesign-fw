@@ -14,7 +14,6 @@
 #define MAX_ENCODER_VAL                 4095
 #define MAX_VOLTAGE                     3.3
 
-
 class Encoder {
 public:
   Encoder();

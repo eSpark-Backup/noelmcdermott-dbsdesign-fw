@@ -5,7 +5,6 @@ int OVER_RATING_V18 = 0;
 
 void Events::setup(Display *dis) {
   display = dis;
-
 }
 
 void Events::errorEvents() {
@@ -13,12 +12,12 @@ void Events::errorEvents() {
   digitalWrite(DRIVER_POWER_V11, HIGH);
   digitalWrite(KILL_RELAY_V10, LOW);
   // Toggle LED and Buzzer
-     if (millis() > soundTimer) {
-        soundTimer = millis() + 1000;
-        tone(TEST_LED, 500, 500);  //tone of 500 for 0.8 seconds 800 milliseconds
-        tone(BUZZER_PIN, 500, 500);
-        tone(RED_LED, 500, 500);
-      }
+  if (millis() > soundTimer) {
+    soundTimer = millis() + 1000;
+    tone(TEST_LED, 500, 500);  //tone of 500 for 0.8 seconds 800 milliseconds
+    tone(BUZZER_PIN, 500, 500);
+    tone(RED_LED, 500, 500);
+  }
   /*DISPALY MESSAGE */
 
   if (OVER_CURRENT_V17 == 1 && OVER_RATING_V18 == 0) {

@@ -11,4 +11,5 @@ void DBS_LED::setup() {
   pinMode(KILL_RELAY_V10, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(CS_PIN, OUTPUT);
+  pinMode(LAMBDA_CS1_PIN, OUTPUT);
 }
