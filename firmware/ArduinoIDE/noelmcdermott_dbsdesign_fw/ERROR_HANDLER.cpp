@@ -2,12 +2,17 @@
 #include "ERROR_HANDLER.hpp"
 
 bool ErrorHandler::isError() {
-  return ((OVER_CURRENT_V17 == 1) || (OVER_RATING_V18 == 1));
+  return ((overCurrentV17 == 1) || (overRatingV18 == 1));
 }
 
 bool ErrorHandler::checkResetButton(int pin) {
-  while (true) {
-    buttonState = digitalRead(pin);
+
+  static int lastButtonState = LOW;
+  static unsigned long lastPressTime = 0;  
+  static int pressCount = 0;
+
+  // while (true) {
+   static int buttonState = digitalRead(pin);
     if (buttonState == HIGH && lastButtonState == LOW) {
       // Button was pressed
       unsigned long currentTime = millis();
@@ -28,8 +33,10 @@ bool ErrorHandler::checkResetButton(int pin) {
     if (pressCount == 2) {
       /*implement the reset functionality*/
       pressCount = 0;  // Reset count after action
-      break;
+      // break;
+      return true;
     }
-  }
-  return 1;
+  // }
+  // return 1;
+  return false;
 }

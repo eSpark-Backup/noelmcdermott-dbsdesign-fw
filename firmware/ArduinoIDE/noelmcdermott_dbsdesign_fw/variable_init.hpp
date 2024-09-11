@@ -13,14 +13,24 @@
 #define FAST_SPEED_V2_1                1000 // Speed for fast approach (steps/sec)
 #define SLOW_SPEEDV2_3                 200  // Speed for slow withdrawal (steps/sec)
 
-extern int HAL_SENSOR_CON_RPM_V8;
-extern int HOME_POSITION_V2_5;
-extern int CURRENT_POSITION_FROM_HOME_V5;
-extern int OVER_CURRENT_V17;
-extern int OVER_RATING_V18;
-extern int POSITION_V2_4;
-extern int POSITION_V_2_2;
-extern int  V7_CONV_AFR_V73;
-extern float CONV_VOLTAGE_V14;
-extern float CONV_CURRENT_V14;
+// extern int HAL_SENSOR_CON_RPM_V8;
+// extern int HOME_POSITION_V2_5;
+// extern int CURRENT_POSITION_FROM_HOME_V5;
+// extern int OVER_CURRENT_V17;
+// extern int OVER_RATING_V18;
+// extern int POSITION_V2_4;
+// extern int POSITION_V_2_2;
+// extern int  V7_CONV_AFR_V73;
+// extern float CONV_VOLTAGE_V14;
+// extern float CONV_CURRENT_V14;
 
+extern int halSensorConRpmV8;
+extern int homePositionV2_5;
+extern int currentPositionFromHomeV5;
+extern int overCurrentV17;
+extern int overRatingV18;
+extern int positionV2_4;
+extern int positionV2_2;
+extern int v7ConvAfrV73;
+extern float convVoltageV14;
+extern float convCurrentV14;

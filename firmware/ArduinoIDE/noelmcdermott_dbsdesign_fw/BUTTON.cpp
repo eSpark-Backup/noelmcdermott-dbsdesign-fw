@@ -5,8 +5,8 @@ Button::Button(uint8_t pin)
 
 void Button::setup() {
   pinMode(pin, INPUT);
-  pinMode(LIMIT_SWITCH, INPUT);
-  pinMode(RESET_V9, INPUT);
+  // pinMode(LIMIT_SWITCH, INPUT);
+  // pinMode(RESET_V9, INPUT);
 }
 
 bool Button::read() {

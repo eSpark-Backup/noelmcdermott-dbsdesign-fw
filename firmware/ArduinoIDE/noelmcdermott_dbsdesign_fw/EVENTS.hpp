@@ -13,6 +13,12 @@
 #define LIMIT_SWITCH                    47               //LIMIT SWITCH                                 //pin left
 #define RESET_V9                        48               //RESET PUSH BUTTTON                     
 
+enum FaultEvent {
+  NO_FAULT,
+  OVER_CURRENT_ONLY,
+  OVER_RATING_ONLY,
+  BOTH_FAULTS
+};
 
 // typedef struct event {
 //   int v1, v2, v3;
@@ -29,6 +35,18 @@ class Events
     // }
   private:
   Display *display;
-  unsigned long soundTimer;
-  // event_t events;
+  
+  enum FaultEvent {
+    NO_FAULT,
+    OVER_CURRENT_ONLY,
+    OVER_RATING_ONLY,
+    BOTH_FAULTS
+  };
+
+  FaultEvent getEvent();
+  void handleOverCurrentOnly();
+  void handleOverRatingOnly();
+  void handleBothFaults();
+
+  unsigned long soundTimer = 0;
 };  

@@ -1,73 +1,105 @@
 #include "EVENTS.hpp"
 
-int OVER_CURRENT_V17 = 0;
-int OVER_RATING_V18 = 0;
+// Global variables
+int overCurrentV17 = 0;
+int overRatingV18 = 0;
 
 void Events::setup(Display *dis) {
   display = dis;
 }
 
-void Events::errorEvents() {
+Events::FaultEvent Events::getEvent() {
+  if (overCurrentV17 == 1 && overRatingV18 == 0) {
+    return OVER_CURRENT_ONLY;
+  } else if (overCurrentV17 == 0 && overRatingV18 == 1) {
+    return OVER_RATING_ONLY;
+  } else if (overCurrentV17 == 1 && overRatingV18 == 1) {
+    return BOTH_FAULTS;
+  } else {
+    return NO_FAULT;
+  }
+}
 
+void Events::errorEvents() {
   digitalWrite(DRIVER_POWER_V11, HIGH);
   digitalWrite(KILL_RELAY_V10, LOW);
+  
   // Toggle LED and Buzzer
   if (millis() > soundTimer) {
     soundTimer = millis() + 1000;
-    tone(TEST_LED, 500, 500);  //tone of 500 for 0.8 seconds 800 milliseconds
+    tone(TEST_LED, 500, 500);  // Tone of 500Hz for 500 milliseconds
     tone(BUZZER_PIN, 500, 500);
     tone(RED_LED, 500, 500);
   }
-  /*DISPALY MESSAGE */
 
-  if (OVER_CURRENT_V17 == 1 && OVER_RATING_V18 == 0) {
-    display->show("CRITICAL FAULT", 1);
-    display->show("E1:OVERCURRENT", 2);
-    display->show("MANUAL RESET REQD", 3);
-    display->show("DRIVER POWER IS OFF", 4);
-    delay(3000);
-    display->clear();
-    display->show("E1:OVERCURRENT", 1);
-    display->show("MANUAL RESET REQD", 2);
-    display->show("TURN MASTER PWR OFF", 3);
-    display->show("CHECK BALLSCREW", 4);
-    delay(3000);
-  } else if (OVER_CURRENT_V17 == 0 && OVER_RATING_V18 == 1) {
-    display->show("CRITICAL FAULT", 1);
-    display->show("E2:PAST V3/V4 LIMITS", 2);
-    display->show("MANUAL RESET REQD", 3);
-    display->show("DRIVER POWER IS OFF", 4);
-    delay(3000);
-    display->clear();
-    display->show("CRITICAL FAULT", 1);
-    display->show("MANUAL RESET REQD", 2);
-    display->show("TURN MASTER PWR OFF", 3);
-    display->show("CHK VALUES V3/V4/V5", 4);
-  } else if (OVER_CURRENT_V17 == 1 && OVER_RATING_V18 == 1) {
-    display->show("CRITICAL FAULT", 1);
-    display->show("FAULT: E1 and/or E2", 2);
-    display->show("MANUAL RESET REQD", 3);
-    display->show("PRESS BUTTON TWICE", 4);
-    delay(3000);
+  // Handle Faults
+  FaultEvent event = getEvent();
+  
+  switch (event) {
+    case OVER_CURRENT_ONLY:
+      handleOverCurrentOnly();
+      break;
+    case OVER_RATING_ONLY:
+      handleOverRatingOnly();
+      break;
+    case BOTH_FAULTS:
+      handleBothFaults();
+      break;
+    default:
+      // No fault or unknown fault condition
+      break;
   }
 }
 
 void Events::resetErrorEvent() {
-  OVER_CURRENT_V17 = 0;
-  OVER_RATING_V18 = 0;
+   overCurrentV17 = 0;
+   overRatingV18 = 0;
 
-  /*ADD MASTER RESET FUNCTIONALITY*/
-
-  /* ADD LED AND BUZZER STATUS*/
+  // Add Master Reset Functionality
   digitalWrite(DRIVER_POWER_V11, LOW);
   digitalWrite(KILL_RELAY_V10, HIGH);
   digitalWrite(RED_LED, LOW);
   digitalWrite(BUZZER_PIN, LOW);
   digitalWrite(GREEN_LED, HIGH);
 
-  /*DISPALY MESSAGE */
+  // Display Message
   display->clear();
   delay(1000);
   display->show("NORMAL OPERATION", 1);
   display->show("SELECT MODE RUN/TEST", 2);
+}
+
+void Events::handleOverCurrentOnly() {
+  display->show("CRITICAL FAULT", 1);
+  display->show("E1:OVERCURRENT", 2);
+  display->show("MANUAL RESET REQD", 3);
+  display->show("DRIVER POWER IS OFF", 4);
+  delay(3000);
+  display->clear();
+  display->show("E1:OVERCURRENT", 1);
+  display->show("MANUAL RESET REQD", 2);
+  display->show("TURN MASTER PWR OFF", 3);
+  display->show("CHECK BALLSCREW", 4);
+  delay(3000);
+}
+
+void Events::handleOverRatingOnly() {
+  display->show("CRITICAL FAULT", 1);
+  display->show("E2:PAST V3/V4 LIMITS", 2);
+  display->show("MANUAL RESET REQD", 3);
+  display->show("DRIVER POWER IS OFF", 4);
+  delay(3000);
+  display->clear();
+  display->show("CRITICAL FAULT", 1);
+  display->show("MANUAL RESET REQD", 2);
+  display->show("TURN MASTER PWR OFF", 3);
+  display->show("CHK VALUES V3/V4/V5", 4);
+}
+
+void Events::handleBothFaults() {
+  display->show("CRITICAL FAULT", 1);
+  display->show("FAULT: E1 and/or E2", 2);
+  display->show("MANUAL RESET REQD", 3);
+  display->show("PRESS BUTTON TWICE", 4);
+  delay(3000);
 }

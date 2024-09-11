@@ -8,8 +8,8 @@ void Encoder::setup() {
 }
 
 float Encoder::getEcoderPosition() {
-  int newPos = encod.getPosition();
-  return newPos;
+    return encod.getPosition();
+
 }
 
 void Encoder::encoderTicks() {

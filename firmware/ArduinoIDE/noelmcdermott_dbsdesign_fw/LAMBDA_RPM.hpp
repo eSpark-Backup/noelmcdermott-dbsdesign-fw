@@ -1,19 +1,18 @@
-
-
 #pragma once
 
 #include <Lambda_rpm.h>
 #include "LED.hpp"
+#include "Stepper_States.hpp"
 
 class Lambda {
 public:
   Lambda()
-    : lambda1(LAMBDA_CS1_PIN) {}
+    : lamda(LAMBDA_CS1_PIN) {}
   void setup();
-  int rpm();
-  float AFcalculation();
+  int getRPM();
+  float getAF();
 
 
 private:
-  Lambda_rpm lambda1;
+  Lambda_rpm lamda;
 };

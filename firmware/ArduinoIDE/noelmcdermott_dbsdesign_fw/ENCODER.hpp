@@ -1,8 +1,6 @@
 #ifndef ENCODER_HPP
 #define ENCODER_HPP
 
-#pragma once
-
 #include <Arduino.h>
 #include <RotaryEncoder.h>
 #include "variable_init.hpp"

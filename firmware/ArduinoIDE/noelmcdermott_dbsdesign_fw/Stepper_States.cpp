@@ -1,11 +1,24 @@
 #include "Stepper_States.hpp"
 
 
-TMC2160Stepper driver(CS_PIN, R_SENSE);
-MilliAmp_Conv converter;
-// int StepperState::pulseCount = 0;
-// Encoder encoder;
-void StepperState::setup(Display *dis, Encoder *enc, ErrorHandler *error, Lambda *lam) {
+Conversion converter;
+
+Stepper::Stepper() : driver(CS_PIN, R_SENSE) {  // Initialize the driver with CS_PIN and R_SENSE
+    // Initialize other members if needed
+}
+
+void Stepper::stepperInitialize()
+{
+  pinMode(DRIVER_POWER_V11, OUTPUT);
+  pinMode(KILL_RELAY_V10, OUTPUT);
+  pinMode(BUZZER_PIN, OUTPUT);
+  pinMode(CS_PIN, OUTPUT);
+  // pinMode(LAMBDA_CS1_PIN, OUTPUT);
+  pinMode(STEP_PIN, OUTPUT);
+  pinMode(DIR_PIN, OUTPUT);
+  
+}
+void Stepper::setup(Display *dis, Encoder *enc, ErrorHandler *error, Lambda *lam) {
   // Setup the TMC2160 driver
   SPI.begin();                          // Initialize SPI
   driver.begin();                       // Initialize driver with default settings
@@ -14,54 +27,37 @@ void StepperState::setup(Display *dis, Encoder *enc, ErrorHandler *error, Lambda
   driver.en_pwm_mode(true);             // Enable StealthChop for quiet movement
   driver.pwm_autoscale(true);           // Enable autoscaling of PWM frequency
   digitalWrite(DRIVER_POWER_V11, LOW);  // enable pin is low
-  // attachInterrupt(digitalPinToInterrupt(HALL_SENSOR_PIN), countPulse, RISING);
+  
 }
 
-// void StepperState::countPulse() {
-//   pulseCount++;  // Increment pulse count on each interrupt
-// }
-
-// int StepperState::rpmStepper() {
-//   unsigned long currentTime = millis();
-//   if (currentTime - lastTime >= 1000) {
-//     noInterrupts();                 // Disable interrupts temporarily
-//     rpm = (pulseCount / 2.0) * 60;  // Convert pulses to RPM (assuming 2 pulses per revolution)
-//     pulseCount = 0;                 // Reset pulse count
-//     lastTime = currentTime;         // Update the last time
-//     interrupts();                   // Re-enable interrupts
-//   }
-//   return rpm;
-// }
-
-void StepperState::homePosition() {
+void Stepper::homePosition() {
 
   moveAnticlockwise(FAST_SPEED_V2_1);
-  while (digitalRead(LIMIT_SWITCH) == HIGH) {}
-  // Keep moving until the limit switch is pressed
-  // StepperState::stopStepper();
-  int position22 = 0;
-  // POSITION_V_2_2 = driver.TSTEP();  // Store position at first approach
+  Button limitSwitch(LIMIT_SWITCH);
+  limitSwitch.setup(); 
+  while (limitSwitch.read() == HIGH) {}
+  // positionV2_2 = driver.TSTEP();  // Store position at first approach
   // driver.TCOOLTHRS(0);              // Set threshold for slow speed
+  Stepper::moveClockwise(SLOW_SPEEDV2_3);
+  while (limitSwitch.read() == LOW) {}
 
-  StepperState::moveClockwise(SLOW_SPEEDV2_3);
-  while (digitalRead(LIMIT_SWITCH) == LOW) {}
-
-  int position24 = driver.TSTEP();
-  HOME_POSITION_V2_5 = 0;
+  positionV2_4 = driver.TSTEP();
+  homePositionV2_5 = 0;
 }
 
-void StepperState::test() {
+void Stepper::test() {
   /*implementation of Test Mode*/
   ENCODER_VAL_IN_VOLT_V13 = MIN_VOLT_V14;
 
   while (digitalRead(MODE_SELECT_V12) == 0) {
-    if (HAL_SENSOR_CON_RPM_V8 > 0)  // check if rpm(v8) greater than 0 its mean switch to test from run;
+    if (halSensorConRpmV8 > 0)  // check if rpm(v8) greater than 0 its mean switch to test from run;
     {
-      // CONV_VOLTAGE_V14 = converter.readExternalInput(MilliAmp_Conv::Scale::Voltage);
-      ENCODER_VAL_IN_VOLT_V13 = CONV_VOLTAGE_V14;
+      // convVoltageV14 = converter.readExternalInput(MilliAmp_Conv::Scale::Voltage);
+      ENCODER_VAL_IN_VOLT_V13 = convVoltageV14;
     } else {
       ENCODER_VAL_IN_VOLT_V13 = encoder->getEconderVoltage();
     }
+
     if (errorHand->checkResetButton(RESET_V9) == 1)  // press button for two second
     {
       digitalWrite(KILL_RELAY_V10, LOW);
@@ -74,8 +70,8 @@ void StepperState::test() {
       encoder->encoderTicks();
       int targetPosition = map(ENCODER_VAL_IN_VOLT_V13, MIN_VOLT_V14, MAX_VOLT_V14, CLOCKWISE_STEP_FROM_HOME_V3, MAX_NUMB_STEP_FROM_HOME_V4);
 
-      if (CURRENT_POSITION_FROM_HOME_V5 != targetPosition) {
-        int stepsToMove = targetPosition - CURRENT_POSITION_FROM_HOME_V5;
+      if (currentPositionFromHomeV5 != targetPosition) {
+        int stepsToMove = targetPosition - currentPositionFromHomeV5;
         bool clockwise = stepsToMove > 0;
 
         digitalWrite(DIR_PIN, clockwise ? HIGH : LOW);
@@ -87,29 +83,29 @@ void StepperState::test() {
           digitalWrite(STEP_PIN, LOW);
           delayMicroseconds(1000000 / ROTATION_SPEED_STEP_PR_SEC_V6);
         }
-        CURRENT_POSITION_FROM_HOME_V5 = targetPosition;  // Update current position to targetPosition
+        currentPositionFromHomeV5 = targetPosition;  // Update current position to targetPosition
       }
-      if (StepperState::outOfRangEvent() == 0) {
+      if (Stepper::outOfRangEvent() == 0) {
         digitalWrite(KILL_RELAY_V10, LOW);  // Set kill relay to closed (active low)
         digitalWrite(TEST_LED, HIGH);       // Turn on Amber LED
         digitalWrite(GREEN_LED, LOW);       // Turn off Green LED
       } else {
-        // StepperState::outOfRangEvent();      // Print error message
+        // Stepper::outOfRangEvent();      // Print error message
         digitalWrite(KILL_RELAY_V10, HIGH);  // Set kill relay to open (inactive)
         digitalWrite(TEST_LED, LOW);         // Turn off Amber LED
         digitalWrite(GREEN_LED, HIGH);       // Turn on Green LED
       }
 
-      // HAL_SENSOR_CON_RPM_V8 = StepperState::rpmStepper();
-      HAL_SENSOR_CON_RPM_V8 = lamd->rpm();
-      V7_CONV_AFR_V73 = lamd->AFcalculation();
+      // halSensorConRpmV8 = Stepper::rpmStepper();
+      halSensorConRpmV8 = lamd->getRPM();
+      v7ConvAfrV73 = lamd->getAF();
       /*Display*/
       display->show(". Mode = TEST", 1);
       String message1 = "ENCODER INPUT = " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
       display->show(message1, 2);
-      String message2 = "RPM = " + String(HAL_SENSOR_CON_RPM_V8);  // NEED TO CALCULATE AND IMPLEMENTATION
+      String message2 = "RPM = " + String(halSensorConRpmV8);  // NEED TO CALCULATE AND IMPLEMENTATION
       display->show(message2, 3);
-      String message3 = "A/F = " + String(V7_CONV_AFR_V73);  // NEED TO CALCULATE AND IMPLEMENTATION
+      String message3 = "A/F = " + String(v7ConvAfrV73);  // NEED TO CALCULATE AND IMPLEMENTATION
       display->show(message3, 4);
 
     } else {
@@ -142,20 +138,20 @@ void StepperState::test() {
   }
 }
 /*RUN MODE*/
-void StepperState::run() {
+void Stepper::run() {
   while (digitalRead(MODE_SELECT_V12) == 1) {
-    CONV_CURRENT_V14 = converter.readExternalInput(MilliAmp_Conv::Scale::MilliAmp);
-    CONV_VOLTAGE_V14 = converter.readExternalInput(MilliAmp_Conv::Scale::Voltage);
+    convCurrentV14 = converter.readExternalInput(Conversion::Scale::MilliAmp);
+    convVoltageV14 = converter.readExternalInput(Conversion::Scale::Voltage);
 
-    if (CONV_CURRENT_V14 >= 4.0f && CONV_CURRENT_V14 < 20.0f) {
+    if (convCurrentV14 >= 4.0f && convCurrentV14 < 20.0f) {
       // Move clockwise
       moveClockwise(ROTATION_SPEED_STEP_PR_SEC_V6);
-    } else if (CONV_CURRENT_V14 > 20.0f && CONV_CURRENT_V14 <= 40.0f) {
+    } else if (convCurrentV14 > 20.0f && convCurrentV14 <= 40.0f) {
       // Move anticlockwise
       moveAnticlockwise(ROTATION_SPEED_STEP_PR_SEC_V6);
     }
     /* Display the result*/
-    if (StepperState::outOfRangEvent() == 0) {
+    if (Stepper::outOfRangEvent() == 0) {
       digitalWrite(RED_LED, LOW);
       digitalWrite(GREEN_LED, HIGH);
       digitalWrite(RUN_LED, HIGH);
@@ -168,20 +164,20 @@ void StepperState::run() {
       digitalWrite(TEST_LED, LOW);
       digitalWrite(KILL_RELAY_V10, LOW);
     }
-    // HAL_SENSOR_CON_RPM_V8 = StepperState::rpmStepper();
-    HAL_SENSOR_CON_RPM_V8 = lamd->rpm();
-    V7_CONV_AFR_V73 = lamd->AFcalculation();
+    // halSensorConRpmV8 = Stepper::rpmStepper();
+    halSensorConRpmV8 = lamd->getRPM();
+    v7ConvAfrV73 = lamd->getAF();
     display->clear();
     display->show("Mode = Run ", 1);
-    String message1 = "MICROSQUIRT INPUT = " + String(CONV_VOLTAGE_V14, 2) + "V";
+    String message1 = "MICROSQUIRT INPUT = " + String(convVoltageV14, 2) + "V";
     display->show(message1, 2);
-    String message2 = "RPM = " + String(HAL_SENSOR_CON_RPM_V8);  // NEED TO CALCULATE AND IMPLEMENTATION
+    String message2 = "RPM = " + String(halSensorConRpmV8);  // NEED TO CALCULATE AND IMPLEMENTATION
     display->show(message2, 3);
-    String message3 = "A/F = " + String(V7_CONV_AFR_V73);  // NEED TO CALCULATE AND IMPLEMENTATION
+    String message3 = "A/F = " + String(v7ConvAfrV73);  // NEED TO CALCULATE AND IMPLEMENTATION
     display->show(message3, 4);
   }
 }
-void StepperState::moveClockwise(int speed) {
+void Stepper::moveClockwise(int speed) {
   driver.shaft(1);  // Set direction to clockwise
   // Generate steps to move the motor
   for (int i = 0; i < STEPS_PER_REV_V1; i++) {
@@ -192,7 +188,7 @@ void StepperState::moveClockwise(int speed) {
   }
 }
 
-void StepperState::moveAnticlockwise(int speed) {
+void Stepper::moveAnticlockwise(int speed) {
   driver.shaft(0);  // Set direction to anticlockwise
 
   // Generate steps to move the motor
@@ -205,7 +201,7 @@ void StepperState::moveAnticlockwise(int speed) {
 }
 
 
-float StepperState::getMotorCurrent() {
+float Stepper::getMotorCurrent() {
   uint8_t cs_actual = driver.cs_actual();  // Current scale (0-31)
   // Calculate the current in mA
   float V_fs = 0.325;  // Full-scale voltage across sense resistor (for default settings)
@@ -215,35 +211,35 @@ float StepperState::getMotorCurrent() {
   return motorCurrent;  // Return current in mA
 }
 
-bool StepperState::overCurrentEvent() {
+bool Stepper::overCurrentEvent() {
   float current_mA = getMotorCurrent();  // Assuming this function returns the current in milliamps
   if (current_mA > MAX_DRIVER_CURRENT_V16) {
-    OVER_CURRENT_V17 = true;  // Set to true if overcurrent
+    overCurrentV17 = true;  // Set to true if overcurrent
   } else {
-    OVER_CURRENT_V17 = false;  // Set to false otherwise
+    overCurrentV17 = false;  // Set to false otherwise
   }
-  return OVER_CURRENT_V17;  // Return the boolean indicating overcurrent status
+  return overCurrentV17;  // Return the boolean indicating overcurrent status
 }
 
-bool StepperState::outOfRangEvent() {
+bool Stepper::outOfRangEvent() {
   /*implementation out of range event*/
-  if (CURRENT_POSITION_FROM_HOME_V5 >= CLOCKWISE_STEP_FROM_HOME_V3 && CURRENT_POSITION_FROM_HOME_V5 <= MAX_NUMB_STEP_FROM_HOME_V4) {
-    OVER_RATING_V18 = false;
+  if (currentPositionFromHomeV5 >= CLOCKWISE_STEP_FROM_HOME_V3 && currentPositionFromHomeV5 <= MAX_NUMB_STEP_FROM_HOME_V4) {
+    overRatingV18 = false;
   } else {
-    OVER_RATING_V18 = true;
+    overRatingV18 = true;
   }
-  return OVER_RATING_V18;
+  return overRatingV18;
 }
 
-void StepperState::stopStepper() {
+void Stepper::stopStepper() {
   driver.toff(0);
 }
-void StepperState::enableStepper() {
+void Stepper::enableStepper() {
   driver.toff(5);
 }
 
-bool StepperState::checkRPM() {
-  if (HAL_SENSOR_CON_RPM_V8 > 0) {
+bool Stepper::checkRPM() {
+  if (halSensorConRpmV8 > 0) {
     return true;
   } else {
     return false;

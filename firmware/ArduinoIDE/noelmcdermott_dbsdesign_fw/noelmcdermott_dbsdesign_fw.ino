@@ -13,7 +13,7 @@
 
 
 DBS_LED Led;
-StepperState motor;
+Stepper motor;
 Events event;
 Display show;
 Encoder encodr;
@@ -21,6 +21,11 @@ Lambda lamda;
 ErrorHandler errorHandler;
 
 Button mode(MODE_SELECT_V12);
+
+enum Modes {
+           TEST_MODE = 0,
+           RUN_MODE = 1
+           };
 
 void setup() {
   show.init();
@@ -31,6 +36,7 @@ void setup() {
   motor.overCurrentEvent();
   motor.outOfRangEvent();
   encodr.setup();
+  motor.stepperInitialize();
   delay(20000);
 }
 
@@ -47,18 +53,22 @@ void loop() {
   else {
     motor.enableStepper();
   }
+
+    /* Check the mode "Run" or "Test" */
+  Modes currentMode = static_cast<Modes>(mode.read());
+
   /*  check the mode "Run" or "Test"  */
-  if (mode.read() == 1) {
+  if (currentMode == RUN_MODE) {
     /*Run Mode*/
     motor.homePosition();
     delay(1000);
     motor.run();
-  } else if (mode.read() == 0) {
+  } else if (currentMode == TEST_MODE) {
     /*Test mode */
     motor.test();
-  } else if ((mode.read() == 0) && (motor.checkRPM() == true)) {
+  } else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true)) {
     motor.test();
-  } else if ((mode.read() == 1) && (motor.checkRPM() == true)) {
+  } else if ((currentMode == RUN_MODE) && (motor.checkRPM() == true)) {
     motor.run();
   }
 }

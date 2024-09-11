@@ -7,17 +7,14 @@
 #define minADCValue 819   // Approximate value for 4mA
 #define maxADCValue 4095  // Approximate value for 20mA
 
-class MilliAmp_Conv {
+class Conversion {
 public:
   enum class Scale {
     MilliAmp,
     Voltage
   };
-  float current_mA();
-  float voltage_V();
   float readExternalInput(Scale scale);
-private:
-  float sensorValue;
-  float current = 0;
-  float volatge = 0;
+  private:
+    float current_mA();
+    float voltage_V();
 };
