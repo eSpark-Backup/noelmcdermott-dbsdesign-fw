@@ -42,7 +42,7 @@ void setup() {
   encodr.setup();
   motor.stepperInitialize();
   delay(1000);     // CHANGE TO 20 SEC
-
+}
 void loop() {
   /* check over current and out of range event flag is high */
   if (errorHandler.isError()) {

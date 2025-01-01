@@ -1,12 +1,15 @@
 #include "DISPLAY.hpp"
+#include <Wire.h>
 
 Display::Display()
   : lcd(LCD_I2C_ADDR, LCD_X_DIM, LCD_Y_DIM) {
 }
 
 void Display::init() {
+  Wire.setPins(18, 17);
   lcd.begin();                         // in LiquidCrystal_I2C.cpp file write SDL and SCL pin values in wire.begin() like wire.gein(18,17)
   lcd.backlight();
+
 }
 
 void Display::show(const String &message, int line) {

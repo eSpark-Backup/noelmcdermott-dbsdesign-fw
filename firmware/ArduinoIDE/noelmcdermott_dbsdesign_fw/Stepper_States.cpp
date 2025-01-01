@@ -165,7 +165,7 @@ void Stepper::run() {
       digitalWrite(TEST_LED, LOW);
       digitalWrite(KILL_RELAY_V10, LOW);
     }
-    halSensorConRpmV8 = Stepper::rpmStepper();
+    // halSensorConRpmV8 = Stepper::rpmStepper();
     halSensorConRpmV8 = lamd->getRPM();
     v7ConvAfrV73 = lamd->getAF();
     display->clear();
