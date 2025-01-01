@@ -100,13 +100,13 @@ void Stepper::test() {
       halSensorConRpmV8 = lamd->getRPM();
       v7ConvAfrV73 = lamd->getAF();
       /*Display*/
-      display->show(". Mode = TEST", 1);
+      display->show(". Mode = TEST", 0);
       String message1 = "ENCODER INPUT = " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
-      display->show(message1, 2);
+      display->show(message1, 1);
       String message2 = "RPM = " + String(halSensorConRpmV8);  // NEED TO CALCULATE AND IMPLEMENTATION
-      display->show(message2, 3);
+      display->show(message2, 2);
       String message3 = "A/F = " + String(v7ConvAfrV73);  // NEED TO CALCULATE AND IMPLEMENTATION
-      display->show(message3, 4);
+      display->show(message3, 3);
 
     } else {
       if (millis() > soundTimer) {
@@ -123,19 +123,20 @@ void Stepper::test() {
       display->clear();
       if (ENCODER_VAL_IN_VOLT_V13 == MIN_VOLT_V14) {
         String message1 = "ENCODER INPUT = " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
-        display->show(message1, 1);
-        display->show("SET THE TARGET VALUE", 2);
-        display->show("ROTATE KNOB", 3);
-        display->show("TBA", 4);
+        display->show(message1, 0);
+        display->show("SET THE TARGET VAL", 1);
+        display->show("ROTATE KNOB", 2);
+        display->show("TBA", 3);
       } else if (ENCODER_VAL_IN_VOLT_V13 > MIN_VOLT_V14) {
-        display->show("TO ENABLE TEST MODE", 1);
-        display->show("PRESS BUTTON TWICE", 2);
+        display->show("TO ENABLE TEST MODE", 0);
+        display->show("PRESS BUTTON TWICE", 1);
         String message1 = "ENCODER INPUT = " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
-        display->show(message1, 3);
-        display->show("TBA", 4);
+        display->show(message1, 2);
+        display->show("TBA", 3);
       }
     }
   }
+
 }
 /*RUN MODE*/
 void Stepper::run() {
@@ -164,18 +165,19 @@ void Stepper::run() {
       digitalWrite(TEST_LED, LOW);
       digitalWrite(KILL_RELAY_V10, LOW);
     }
-    // halSensorConRpmV8 = Stepper::rpmStepper();
+    halSensorConRpmV8 = Stepper::rpmStepper();
     halSensorConRpmV8 = lamd->getRPM();
     v7ConvAfrV73 = lamd->getAF();
     display->clear();
-    display->show("Mode = Run ", 1);
-    String message1 = "MICROSQUIRT INPUT = " + String(convVoltageV14, 2) + "V";
-    display->show(message1, 2);
+    display->show("Mode = Run", 0);
+    String message1 = "MICROSQ.INPUT= " + String(convVoltageV14, 2) + "V";
+    display->show(message1, 1);
     String message2 = "RPM = " + String(halSensorConRpmV8);  // NEED TO CALCULATE AND IMPLEMENTATION
-    display->show(message2, 3);
+    display->show(message2, 2);
     String message3 = "A/F = " + String(v7ConvAfrV73);  // NEED TO CALCULATE AND IMPLEMENTATION
-    display->show(message3, 4);
+    display->show(message3, 3);
   }
+
 }
 void Stepper::moveClockwise(int speed) {
   driver.shaft(1);  // Set direction to clockwise

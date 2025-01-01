@@ -28,17 +28,20 @@ enum Modes {
            };
 
 void setup() {
+  Serial.begin(115200);
+  Serial.println("Starting setup...");
   show.init();
   event.setup(&show);
   Led.setup();
+  mode.setup();
   lamda.setup();
   motor.setup(&show, &encodr, &errorHandler, &lamda);
+  Serial.println("setup has done...");
   motor.overCurrentEvent();
   motor.outOfRangEvent();
   encodr.setup();
   motor.stepperInitialize();
-  delay(20000);
-}
+  delay(1000);     // CHANGE TO 20 SEC
 
 void loop() {
   /* check over current and out of range event flag is high */
@@ -56,15 +59,19 @@ void loop() {
 
     /* Check the mode "Run" or "Test" */
   Modes currentMode = static_cast<Modes>(mode.read());
+  Serial.println("MODE SELECTION...");
+  Serial.println(currentMode);
 
   /*  check the mode "Run" or "Test"  */
   if (currentMode == RUN_MODE) {
     /*Run Mode*/
+    Serial.println("SELECTED RUN MODE.");
     motor.homePosition();
     delay(1000);
     motor.run();
   } else if (currentMode == TEST_MODE) {
     /*Test mode */
+    delay(1000);
     motor.test();
   } else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true)) {
     motor.test();

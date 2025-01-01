@@ -11,7 +11,7 @@
 #define MODE_SELECT_V12                 6               //mode selection switch state (“Run” = 1, “Test” = 0)
 #define EXTERNAL_INPUT                  1               //EXTERNAL INPUT
 #define LIMIT_SWITCH                    47               //LIMIT SWITCH                                 //pin left
-#define RESET_V9                        48               //RESET PUSH BUTTTON                     
+#define RESET_V9                        48               //RESET PUSH BUTTTON    or toggle                 
 
 enum FaultEvent {
   NO_FAULT,

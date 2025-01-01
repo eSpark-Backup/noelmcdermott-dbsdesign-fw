@@ -48,7 +48,7 @@ public:
 
 private:
   TMC2160Stepper driver;  // Member object
-  Display *display;
+  Display *display = new Display();;
   Encoder *encoder;
   ErrorHandler *errorHand;
   Lambda *lamd;
