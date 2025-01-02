@@ -47,8 +47,8 @@ public:
   // static void countPulse();
 
 private:
-  TMC2160Stepper driver;  // Member object
-  Display *display = new Display();;
+  TMC2160Stepper driver = TMC2160Stepper(CS_PIN);  // Member object
+  Display *display = new Display();
   Encoder *encoder;
   ErrorHandler *errorHand;
   Lambda *lamd;

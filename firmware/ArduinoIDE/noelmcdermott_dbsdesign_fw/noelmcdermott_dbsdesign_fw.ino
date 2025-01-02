@@ -70,7 +70,7 @@ void loop() {
     delay(1000);
     motor.run();
   } else if (currentMode == TEST_MODE) {
-    /*Test mode */
+  /*Test mode */
     delay(1000);
     motor.test();
   } else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true)) {

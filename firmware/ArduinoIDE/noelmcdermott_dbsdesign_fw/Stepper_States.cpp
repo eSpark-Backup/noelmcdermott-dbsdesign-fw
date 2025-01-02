@@ -3,6 +3,7 @@
 
 Conversion converter;
 
+// TMC2160Stepper driver = TMC2160Stepper(CS_PIN); 
 Stepper::Stepper() : driver(CS_PIN, R_SENSE) {  // Initialize the driver with CS_PIN and R_SENSE
     // Initialize other members if needed
 }
@@ -21,18 +22,18 @@ void Stepper::stepperInitialize()
 void Stepper::setup(Display *dis, Encoder *enc, ErrorHandler *error, Lambda *lam) {
   // Setup the TMC2160 driver
   SPI.begin();                          // Initialize SPI
+  // SPI.begin(SW_SCK, SW_MISO, SW_MOSI, CS_PIN);
   driver.begin();                       // Initialize driver with default settings
-  driver.rms_current(500);              // Set motor RMS current
+  driver.rms_current(600);              // Set motor RMS current
   driver.microsteps(16);                // Set microsteps
-  driver.en_pwm_mode(true);             // Enable StealthChop for quiet movement
+  driver.en_pwm_mode(1);             // Enable StealthChop for quiet movement
   driver.pwm_autoscale(true);           // Enable autoscaling of PWM frequency
   digitalWrite(DRIVER_POWER_V11, LOW);  // enable pin is low
   
 }
 
 void Stepper::homePosition() {
-
-  moveAnticlockwise(FAST_SPEED_V2_1);
+  Stepper::moveAnticlockwise(FAST_SPEED_V2_1);
   Button limitSwitch(LIMIT_SWITCH);
   limitSwitch.setup(); 
   while (limitSwitch.read() == HIGH) {}
@@ -184,22 +185,22 @@ void Stepper::moveClockwise(int speed) {
   // Generate steps to move the motor
   for (int i = 0; i < STEPS_PER_REV_V1; i++) {
     digitalWrite(STEP_PIN, HIGH);
-    delayMicroseconds(1000000 / speed);  // Adjust speed with delay
+    delayMicroseconds(100000 / speed);  // Adjust speed with delay
     digitalWrite(STEP_PIN, LOW);
-    delayMicroseconds(1000000 / speed);
+    delayMicroseconds(100000 / speed);
   }
 }
 
 void Stepper::moveAnticlockwise(int speed) {
   driver.shaft(0);  // Set direction to anticlockwise
-
   // Generate steps to move the motor
   for (int i = 0; i < STEPS_PER_REV_V1; i++) {
     digitalWrite(STEP_PIN, HIGH);
-    delayMicroseconds(1000000 / speed);  // Adjust speed with delay
+    delayMicroseconds(100000 / speed);  // Adjust speed with delay
     digitalWrite(STEP_PIN, LOW);
-    delayMicroseconds(1000000 / speed);
+    delayMicroseconds(100000 / speed);
   }
+  // delay(100);
 }
 
 
