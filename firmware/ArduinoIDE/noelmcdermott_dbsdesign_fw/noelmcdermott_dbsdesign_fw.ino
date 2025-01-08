@@ -32,31 +32,36 @@ void setup() {
   Serial.println("Starting setup...");
   show.init();
   event.setup(&show);
+  event.initialization();
+  errorHandler.InterruptSetup(RESET_V9);
   Led.setup();
   mode.setup();
   lamda.setup();
+  motor.stepperInitialize();
   motor.setup(&show, &encodr, &errorHandler, &lamda);
   Serial.println("setup has done...");
   motor.overCurrentEvent();
   motor.outOfRangEvent();
   encodr.setup();
-  motor.stepperInitialize();
   delay(1000);     // CHANGE TO 20 SEC
 }
 void loop() {
   /* check over current and out of range event flag is high */
   if (errorHandler.isError()) {
-    motor.stopStepper();
-    event.errorEvents();
-    if (errorHandler.checkResetButton(RESET_V9) == 1) {
-      event.resetErrorEvent();
-    }
+      motor.stopStepper();
+      event.errorEvents();
+                       
+      if (digitalRead(RESET_V9) == 0) {    // if (errorHandler.checkResetButton(RESET_V9) == false) {
+        event.resetErrorEvent();
+        Serial.print("Reset button press\n");
+       }  
   }
 
   else {
     motor.enableStepper();
   }
 
+  motor.homePosition();
     /* Check the mode "Run" or "Test" */
   Modes currentMode = static_cast<Modes>(mode.read());
   Serial.println("MODE SELECTION...");
@@ -66,12 +71,13 @@ void loop() {
   if (currentMode == RUN_MODE) {
     /*Run Mode*/
     Serial.println("SELECTED RUN MODE.");
-    motor.homePosition();
-    delay(1000);
+    // motor.homePosition();
+    delay(10);
     motor.run();
   } else if (currentMode == TEST_MODE) {
   /*Test mode */
-    delay(1000);
+    Serial.println("SELECTED RUN MODE.");
+    delay(100);
     motor.test();
   } else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true)) {
     motor.test();

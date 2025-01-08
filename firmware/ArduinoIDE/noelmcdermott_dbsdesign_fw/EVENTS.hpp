@@ -27,6 +27,7 @@ enum FaultEvent {
 class Events
 {
   public:
+    void initialization();
     void setup(Display *dis);
     void errorEvents();
     void resetErrorEvent();

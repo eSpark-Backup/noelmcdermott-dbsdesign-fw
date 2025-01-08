@@ -9,9 +9,9 @@
 
 #define CLOCKWISE_STEP_FROM_HOME_V3    500          // ASSUME
 #define MAX_NUMB_STEP_FROM_HOME_V4     2000         // ASSUME
-#define ROTATION_SPEED_STEP_PR_SEC_V6  1000   
-#define FAST_SPEED_V2_1                1000 // Speed for fast approach (steps/sec)
-#define SLOW_SPEEDV2_3                 200  // Speed for slow withdrawal (steps/sec)
+#define ROTATION_SPEED_STEP_PR_SEC_V6  10000   
+#define FAST_SPEED_V2_1                10000 // Speed for fast approach (steps/sec)
+#define SLOW_SPEEDV2_3                 2000  // Speed for slow withdrawal (steps/sec)
 
 // extern int HAL_SENSOR_CON_RPM_V8;
 // extern int HOME_POSITION_V2_5;

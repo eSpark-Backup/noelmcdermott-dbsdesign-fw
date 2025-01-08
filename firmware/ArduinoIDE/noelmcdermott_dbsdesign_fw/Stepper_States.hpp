@@ -25,11 +25,18 @@ class Lambda;
 #define SW_SCK              14 // Software Slave Clock (SCK)
 // #define LAMBDA_CS1_PIN      16  // CS pin for lambda sheet
 
-extern TMC2160Stepper driver;
 
 class Stepper {
 public:
-  Stepper();
+  Stepper(): driver(CS_PIN){
+  SPI.begin(SW_SCK, SW_MISO, SW_MOSI, CS_PIN);                         // Initialize SPI
+  driver.begin();                       // Initialize driver with default settings
+  driver.rms_current(1000);              // Set motor RMS current
+  driver.en_pwm_mode(1); 
+  // driver.microsteps(16);
+  digitalWrite(DRIVER_POWER_V11, LOW);
+  };
+
   void stepperInitialize();
   void setup(Display *dis, Encoder *enc, ErrorHandler *error, Lambda *lam);
   void homePosition();
@@ -47,7 +54,7 @@ public:
   // static void countPulse();
 
 private:
-  TMC2160Stepper driver = TMC2160Stepper(CS_PIN);  // Member object
+  TMC2160Stepper driver;  // Member object
   Display *display = new Display();
   Encoder *encoder;
   ErrorHandler *errorHand;
