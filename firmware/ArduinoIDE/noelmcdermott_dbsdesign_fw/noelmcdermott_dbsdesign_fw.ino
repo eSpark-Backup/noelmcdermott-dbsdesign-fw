@@ -62,22 +62,21 @@ void loop() {
   }
 
   motor.homePosition();
+
     /* Check the mode "Run" or "Test" */
   Modes currentMode = static_cast<Modes>(mode.read());
   Serial.println("MODE SELECTION...");
   Serial.println(currentMode);
-
   /*  check the mode "Run" or "Test"  */
   if (currentMode == RUN_MODE) {
     /*Run Mode*/
     Serial.println("SELECTED RUN MODE.");
-    // motor.homePosition();
-    delay(10);
+    // delay(10);
     motor.run();
   } else if (currentMode == TEST_MODE) {
   /*Test mode */
     Serial.println("SELECTED RUN MODE.");
-    delay(100);
+    // delay(100);
     motor.test();
   } else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true)) {
     motor.test();

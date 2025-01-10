@@ -2,16 +2,16 @@
 #include <Arduino.h>
 
 // #define ROTATION_SPEED_V6     //rotation speed (steps/sec) during normal operation ie rotation speed
-#define STEPS_PER_REV_V1  200  //number of steps/rev (360/1.8 = 200 in this case)
+#define STEPS_PER_REV_V1  3200          //200 * 16 //number of steps/rev (360/1.8 = 200 in this case)
 #define R_SENSE           0.11f
-#define MAX_VOLT_V14      3.3f
+#define MAX_VOLT_V14      3.3f 
 #define MIN_VOLT_V14      0
 
 #define CLOCKWISE_STEP_FROM_HOME_V3    500          // ASSUME
 #define MAX_NUMB_STEP_FROM_HOME_V4     2000         // ASSUME
-#define ROTATION_SPEED_STEP_PR_SEC_V6  10000   
-#define FAST_SPEED_V2_1                10000 // Speed for fast approach (steps/sec)
-#define SLOW_SPEEDV2_3                 2000  // Speed for slow withdrawal (steps/sec)
+#define ROTATION_SPEED_STEP_PR_SEC_V6  1000 
+#define FAST_SPEED_V2_1                1000 // Speed for fast approach (steps/sec)
+#define SLOW_SPEEDV2_3                 500  // Speed for slow withdrawal (steps/sec)
 
 // extern int HAL_SENSOR_CON_RPM_V8;
 // extern int HOME_POSITION_V2_5;

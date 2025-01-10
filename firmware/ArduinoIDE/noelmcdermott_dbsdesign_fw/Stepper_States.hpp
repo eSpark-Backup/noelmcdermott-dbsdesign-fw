@@ -33,7 +33,7 @@ public:
   driver.begin();                       // Initialize driver with default settings
   driver.rms_current(1000);              // Set motor RMS current
   driver.en_pwm_mode(1); 
-  // driver.microsteps(16);
+  driver.microsteps(16);
   digitalWrite(DRIVER_POWER_V11, LOW);
   };
 

@@ -9,7 +9,7 @@
 
 #define ENCODER_OUT_A                   2
 #define ENCODER_OUT_B                   21
-#define MAX_ENCODER_VAL                 1024            //4095
+#define MAX_ENCODER_VAL                 255         //1024   // 4096
 #define MAX_VOLTAGE                     3.3
 
 class Encoder {
@@ -21,9 +21,7 @@ public:
   static void IRAM_ATTR checkPositionInterrupt();
 
 private:
-// int getEcoderPosition();
 RotaryEncoder encod;
-
 };
 
 #endif // ENCODER_HPP
