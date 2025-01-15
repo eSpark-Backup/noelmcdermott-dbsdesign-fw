@@ -8,12 +8,12 @@
 #include "DISPLAY.hpp"
 #include "ENCODER.hpp"
 #include "ERROR_HANDLER.hpp"
-#include "LAMBDA_RPM.hpp"
 #include "BUTTON.hpp"
+#include "LAMBDA_RPM.hpp"
 
 class Encoder;
 class ErrorHandler;
-class Lambda;
+// class Lambda;
 
 #define MAX_DRIVER_CURRENT_V16 20  //(20mA) maximum allowable driver current
 #define DRIVER_POWER_V11    11 // Enable PIN
@@ -25,11 +25,10 @@ class Lambda;
 #define SW_SCK              14 // Software Slave Clock (SCK)
 // #define LAMBDA_CS1_PIN      16  // CS pin for lambda sheet
 
-
 class Stepper {
 public:
   Stepper(): driver(CS_PIN){
-  SPI.begin(SW_SCK, SW_MISO, SW_MOSI, CS_PIN);                         // Initialize SPI
+  SPI.begin(SW_SCK, SW_MISO, SW_MOSI);                         // Initialize SPI
   driver.begin();                       // Initialize driver with default settings
   driver.rms_current(1000);              // Set motor RMS current
   driver.en_pwm_mode(1); 
@@ -50,6 +49,7 @@ public:
   void enableStepper();
   bool outOfRangEvent();
   bool checkRPM();
+
   // int rpmStepper();
   // static void countPulse();
 
@@ -58,7 +58,7 @@ private:
   Display *display = new Display();
   Encoder *encoder;
   ErrorHandler *errorHand;
-  Lambda *lamd;
+  Lambda *lamd = new Lambda();
   float ENCODER_VAL_IN_VOLT_V13;
   unsigned long soundTimer;
   int currentPositionFromHomeV5 = 0;

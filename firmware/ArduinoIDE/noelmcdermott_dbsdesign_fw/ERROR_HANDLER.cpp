@@ -5,7 +5,7 @@
 volatile int pressCount = 0; // Counter for valid double presses
 volatile unsigned long lastPressTime = 0; // Tracks the time of the last press
 volatile bool buttonPressed = false; // Tracks if the button was pressed
-const unsigned long debounceTime = 50; // Debounce time in ms
+const unsigned long debounceTime = 20; // Debounce time in ms
 const unsigned long doublePressInterval = 2000; // Time window fo
 
 

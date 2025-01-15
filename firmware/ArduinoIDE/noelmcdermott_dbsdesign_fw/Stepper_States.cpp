@@ -1,7 +1,5 @@
 #include "Stepper_States.hpp"
 
-
-
 Conversion converter;
 
 void generateTone(int pin, int frequency, int duration) {
@@ -52,6 +50,15 @@ void stopTone(int pin) {
     digitalWrite(pin, LOW);  // Ensure the pin is turned off
 }
 
+void selectChip(int cspin){
+  digitalWrite(LAMBDA_CS1_PIN, HIGH);
+  digitalWrite(cspin, LOW);
+}
+
+void deselectChip(int cspin){
+  digitalWrite(LAMBDA_CS1_PIN, LOW);
+  digitalWrite(cspin, HIGH);
+}
 
 void Stepper::stepperInitialize()
 {
@@ -59,7 +66,6 @@ void Stepper::stepperInitialize()
   pinMode(KILL_RELAY_V10, OUTPUT);
   pinMode(BUZZER_PIN, OUTPUT);
   pinMode(CS_PIN, OUTPUT);
-  // pinMode(LAMBDA_CS1_PIN, OUTPUT);
   pinMode(STEP_PIN, OUTPUT);
   pinMode(DIR_PIN, OUTPUT);  
 }
@@ -69,23 +75,20 @@ void Stepper::setup(Display *dis, Encoder *enc, ErrorHandler *error, Lambda *lam
 void Stepper::homePosition() {
   display->show("  FIRMWARE  ", 0);
   display->show("  STARTED.. ", 1);
+  int countStep = 0;
   Button limitSwitch(LIMIT_SWITCH);
   limitSwitch.setup(); 
   while (limitSwitch.read() == HIGH) {
+  
   Stepper::moveAnticlockwise(FAST_SPEED_V2_1);
   }
-  // positionV2_2 = driver.TSTEP();  // Store position at first approach
-  // driver.TCOOLTHRS(0);              // Set threshold for slow speed
-  // Stepper::moveClockwise(SLOW_SPEEDV2_3);
   while (limitSwitch.read() == LOW) {
     Stepper::moveClockwise(SLOW_SPEEDV2_3);
+    countStep++;
   }
-  // positionV2_4 = driver.TSTEP();
-  // Serial.print("TSTEP: ");
-  // Serial.print(positionV2_4);
   display->clear();
-  
-  homePositionV2_5 = 0;
+  homePositionV2_5 = countStep;
+  // homePositionV2_5 = 0;
 }
 
 void Stepper::test() {
@@ -93,20 +96,24 @@ void Stepper::test() {
   ENCODER_VAL_IN_VOLT_V13 = MIN_VOLT_V14;
   display->clear();
   while (digitalRead(MODE_SELECT_V12) == 0) {
-
+   
     if (halSensorConRpmV8 > 0)  // check if rpm(v8) greater than 0 its mean switch to test from run;
     {
       // convVoltageV14 = converter.readExternalInput(MilliAmp_Conv::Scale::Voltage);
       ENCODER_VAL_IN_VOLT_V13 = convVoltageV14;
+      Serial.println(" The halSensorConRpmV8 is greater than zero so ENCODER_VAL_IN_VOLT_V13 value is: ");
+      Serial.println(ENCODER_VAL_IN_VOLT_V13);
     } else {
       ENCODER_VAL_IN_VOLT_V13 = encoder->getEconderVoltage();
     }
 
     if (errorHand->checkResetButton(RESET_V9) == false)  // press button for two second
     {
-      // halSensorConRpmV8 = lamd->getRPM();
-      // v7ConvAfrV73 = lamd->getAF();
-
+      deselectChip(CS_PIN);
+      halSensorConRpmV8 = lamd->getRPM();
+      v7ConvAfrV73 = lamd->getAF();
+      delay(10);
+      selectChip(CS_PIN);
             /*Display*/
       display->clear();
       display->show("Mode = TEST", 0);
@@ -116,7 +123,7 @@ void Stepper::test() {
       display->show(message2, 2);
       String message3 = "A/F = " + String(v7ConvAfrV73);  // NEED TO CALCULATE AND IMPLEMENTATION
       display->show(message3, 3);
-      // digitalWrite(KILL_RELAY_V10, LOW);
+      digitalWrite(KILL_RELAY_V10, LOW);
       stopTone(BUZZER_PIN);
       stopTone(TEST_LED);
       stopTone(RED_LED);
@@ -148,8 +155,8 @@ void Stepper::test() {
         }
         currentPositionFromHomeV5 = targetPosition;  // Update current position to targetPosition
         Serial.print("the updated current position of V5 is: ");
-        Serial.print(currentPositionFromHomeV5);
-        Serial.print("\n");
+        Serial.println(currentPositionFromHomeV5);
+        
       }
       if (Stepper::outOfRangEvent() == 0) {
         digitalWrite(KILL_RELAY_V10, LOW);  // Set kill relay to closed (active low)
@@ -178,17 +185,17 @@ void Stepper::test() {
 
         String message1 = "ENCODER INPUT= " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
         display->show(message1, 0);
-        display->show("SET THE TARGET VAL", 1);
-        display->show("ROTATE KNOB", 2);
-        display->show("TBA", 3);
+        display->show("SET THE TARGET VAL  ", 1);
+        display->show("ROTATE KNOB         ", 2);
+        display->show("TBA                 ", 3);
         
       } else if (ENCODER_VAL_IN_VOLT_V13 > MIN_VOLT_V14) {
-        // display->clear();
-        display->show("TO ENABLE TEST MODE", 0);
-        display->show("PRESS BUTTON TWICE", 1);
+       
+        display->show("TO ENABLE TEST MODE ", 0);
+        display->show("PRESS BUTTON TWICE  ", 1);
         String message1 = "ENCODER INPUT= " + String(ENCODER_VAL_IN_VOLT_V13, 2) + "V";
         display->show(message1, 2);
-        display->show("TBA", 3);
+        display->show("TBA                 ", 3);
         
       }
     }
@@ -201,7 +208,6 @@ void Stepper::run() {
   while (digitalRead(MODE_SELECT_V12) == 1) {
     convCurrentV14 = converter.readExternalInput(Conversion::Scale::MilliAmp);
     convVoltageV14 = converter.readExternalInput(Conversion::Scale::Voltage);
-      // convCurrentV14 = 5.32f;
     if (convCurrentV14 >= 4.0f && convCurrentV14 < 20.0f) {
       // Move clockwise
       moveClockwise(ROTATION_SPEED_STEP_PR_SEC_V6);
@@ -223,11 +229,10 @@ void Stepper::run() {
       digitalWrite(TEST_LED, LOW);
       digitalWrite(KILL_RELAY_V10, LOW);
     }
-    // halSensorConRpmV8 = Stepper::rpmStepper();
-    // halSensorConRpmV8 = lamd->getRPM();
-    // v7ConvAfrV73 = lamd->getAF();
+    
+    halSensorConRpmV8 = lamd->getRPM();
+    v7ConvAfrV73 = lamd->getAF();
 
-    // display->clear();
     display->show("Mode = Run", 0);
     String message1 = "MICROSQ.INPUT= " + String(convVoltageV14, 2) + "V";
     display->show(message1, 1);
@@ -240,8 +245,8 @@ void Stepper::run() {
 
 }
 void Stepper::moveClockwise(int speed) {
+  selectChip(CS_PIN);
   driver.shaft(0);  // Set direction to clockwise
-  // digitalWrite(DIR_PIN, 0);
   Serial.print("Running motor clockwise\n");
   // Generate steps to move the motor
   for (int i = 0; i < STEPS_PER_REV_V1; i++) {
@@ -250,12 +255,13 @@ void Stepper::moveClockwise(int speed) {
     digitalWrite(STEP_PIN, LOW);
     delayMicroseconds(100000 / speed);
   }
+  deselectChip(CS_PIN);
 }
 
 void Stepper::moveAnticlockwise(int speed) {
+  selectChip(CS_PIN);
   driver.shaft(1);  // Set direction to anticlockwise
   Serial.print("Running motor anticlockwise\n");
-  // digitalWrite(DIR_PIN, 1);
   // Generate steps to move the motor
   for (int i = 0; i < STEPS_PER_REV_V1; i++) {
     digitalWrite(STEP_PIN, HIGH);
@@ -263,7 +269,8 @@ void Stepper::moveAnticlockwise(int speed) {
     digitalWrite(STEP_PIN, LOW);
     delayMicroseconds(100000 / speed);
   }
-  // delay(100);
+  deselectChip(CS_PIN);
+  
 }
 
 

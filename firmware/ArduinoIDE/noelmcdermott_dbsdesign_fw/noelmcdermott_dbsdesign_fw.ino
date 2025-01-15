@@ -20,6 +20,8 @@ Encoder encodr;
 Lambda lamda;
 ErrorHandler errorHandler;
 
+bool HomePositionRun = false;
+
 Button mode(MODE_SELECT_V12);
 
 enum Modes {
@@ -39,6 +41,7 @@ void setup() {
   lamda.setup();
   motor.stepperInitialize();
   motor.setup(&show, &encodr, &errorHandler, &lamda);
+  
   Serial.println("setup has done...");
   motor.overCurrentEvent();
   motor.outOfRangEvent();
@@ -61,7 +64,10 @@ void loop() {
     motor.enableStepper();
   }
 
-  motor.homePosition();
+ if (HomePositionRun == false){
+    motor.homePosition();
+    HomePositionRun = true;
+ }
 
     /* Check the mode "Run" or "Test" */
   Modes currentMode = static_cast<Modes>(mode.read());
