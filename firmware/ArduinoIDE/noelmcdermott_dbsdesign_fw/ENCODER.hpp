@@ -7,10 +7,10 @@
 #include "LED.hpp"
 #include "EVENTS.hpp"
 
-#define ENCODER_OUT_A                   2
-#define ENCODER_OUT_B                   21
-#define MAX_ENCODER_VAL                 255         //1024   // 4096
-#define MAX_VOLTAGE                     3.3
+#define ENCODER_OUT_A 2
+#define ENCODER_OUT_B 21
+#define MAX_ENCODER_VAL 255  //1024   // 4096
+#define MAX_VOLTAGE 3.3
 
 class Encoder {
 public:
@@ -21,7 +21,7 @@ public:
   static void IRAM_ATTR checkPositionInterrupt();
 
 private:
-RotaryEncoder encod;
+  RotaryEncoder encod;
 };
 
-#endif // ENCODER_HPP
+#endif  // ENCODER_HPP

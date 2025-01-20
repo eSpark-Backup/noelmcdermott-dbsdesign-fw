@@ -13,27 +13,26 @@
 
 class Encoder;
 class ErrorHandler;
-// class Lambda;
 
 #define MAX_DRIVER_CURRENT_V16 20  //(20mA) maximum allowable driver current
-#define DRIVER_POWER_V11    11 // Enable PIN
-#define DIR_PIN             10 // Direction
-#define STEP_PIN            9 // Step
-#define CS_PIN              15 // Chip select
-#define SW_MOSI             13 // Software Master Out Slave In (MOSI)
-#define SW_MISO             12 // Software Master In Slave Out (MISO)
-#define SW_SCK              14 // Software Slave Clock (SCK)
-// #define LAMBDA_CS1_PIN      16  // CS pin for lambda sheet
+#define DRIVER_POWER_V11 11        // Enable PIN
+#define DIR_PIN 10                 // Direction
+#define STEP_PIN 9                 // Step
+#define CS_PIN 15                  // Chip select
+#define SW_MOSI 13                 // Software Master Out Slave In (MOSI)
+#define SW_MISO 12                 // Software Master In Slave Out (MISO)
+#define SW_SCK 14                  // Software Slave Clock (SCK)
 
 class Stepper {
 public:
-  Stepper(): driver(CS_PIN){
-  SPI.begin(SW_SCK, SW_MISO, SW_MOSI);                         // Initialize SPI
-  driver.begin();                       // Initialize driver with default settings
-  driver.rms_current(1000);              // Set motor RMS current
-  driver.en_pwm_mode(1); 
-  driver.microsteps(16);
-  digitalWrite(DRIVER_POWER_V11, LOW);
+  Stepper()
+    : driver(CS_PIN) {
+    SPI.begin(SW_SCK, SW_MISO, SW_MOSI);  // Initialize SPI
+    driver.begin();                       // Initialize driver with default settings
+    driver.rms_current(1000);             // Set motor RMS current
+    driver.en_pwm_mode(1);
+    driver.microsteps(16);
+    digitalWrite(DRIVER_POWER_V11, LOW);
   };
 
   void stepperInitialize();
@@ -49,9 +48,8 @@ public:
   void enableStepper();
   bool outOfRangEvent();
   bool checkRPM();
+  float getConvCurrentV14() const;
 
-  // int rpmStepper();
-  // static void countPulse();
 
 private:
   TMC2160Stepper driver;  // Member object
@@ -66,7 +64,7 @@ private:
   int homePositionV2_5 = 0;
   int overCurrentV17 = 0;
   int overRatingV18 = 0;
-  int v7ConvAfrV73 = 0;
+  float v7ConvAfrV73 = 0;
   int halSensorConRpmV8 = 0;
   float convVoltageV14 = 0;
   float convCurrentV14 = 0;

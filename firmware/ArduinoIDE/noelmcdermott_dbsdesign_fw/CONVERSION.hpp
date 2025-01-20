@@ -14,7 +14,7 @@ public:
     Voltage
   };
   float readExternalInput(Scale scale);
-  private:
-    float current_mA();
-    float voltage_V();
+private:
+  float current_mA();
+  float voltage_V();
 };

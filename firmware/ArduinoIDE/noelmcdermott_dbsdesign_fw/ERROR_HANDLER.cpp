@@ -1,6 +1,7 @@
  
 #include "ERROR_HANDLER.hpp"
 
+
 /*third implmentations*/
 volatile int pressCount = 0; // Counter for valid double presses
 volatile unsigned long lastPressTime = 0; // Tracks the time of the last press
@@ -20,7 +21,7 @@ void buttonPressISR() {
 
   // Debounce check
   if (interruptTime - lastInterruptTime > debounceTime) {
-    buttonPressed = true; // Set flag for processing in loop
+    buttonPressed = true;  // Set flag for processing in loop
     lastInterruptTime = interruptTime;
   }
 }
@@ -36,13 +37,13 @@ void ErrorHandler::InterruptSetup(int pin){
 bool ErrorHandler::checkResetButton(int pin) {
   if (buttonPressed) {
     unsigned long currentTime = millis();
-    buttonPressed = false; 
+    buttonPressed = false;
 
     if (currentTime - lastPressTime <= doublePressInterval && lastPressTime != 0) {
       pressCount++;
       Serial.println("Double press detected. Press count: TRUE ");
-      
-      lastPressTime = 0; 
+
+      lastPressTime = 0;
       pressCount = 0;
       return false;
     } else {

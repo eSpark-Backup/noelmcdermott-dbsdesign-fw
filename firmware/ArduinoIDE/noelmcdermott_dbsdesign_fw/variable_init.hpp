@@ -31,7 +31,7 @@ extern int overCurrentV17;
 extern int overRatingV18;
 extern int positionV2_4;
 extern int positionV2_2;
-extern int v7ConvAfrV73;
+extern float v7ConvAfrV73;
 extern float convVoltageV14;
 extern float convCurrentV14;
 

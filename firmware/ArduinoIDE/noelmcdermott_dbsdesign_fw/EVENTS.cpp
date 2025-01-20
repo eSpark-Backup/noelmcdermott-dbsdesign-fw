@@ -8,10 +8,9 @@ void Events::setup(Display *dis) {
   display = dis;
 }
 
-void Events::initialization()
-{
-   pinMode(RESET_V9, INPUT);
-   pinMode(LIMIT_SWITCH, INPUT);
+void Events::initialization() {
+  pinMode(RESET_V9, INPUT);
+  pinMode(LIMIT_SWITCH, INPUT);
 }
 
 Events::FaultEvent Events::getEvent() {
@@ -29,7 +28,7 @@ Events::FaultEvent Events::getEvent() {
 void Events::errorEvents() {
   digitalWrite(DRIVER_POWER_V11, HIGH);
   digitalWrite(KILL_RELAY_V10, LOW);
-  
+
   // Toggle LED and Buzzer
   if (millis() > soundTimer) {
     soundTimer = millis() + 1000;
@@ -40,7 +39,7 @@ void Events::errorEvents() {
 
   // Handle Faults
   FaultEvent event = getEvent();
-  
+
   switch (event) {
     case OVER_CURRENT_ONLY:
       handleOverCurrentOnly();
@@ -58,8 +57,8 @@ void Events::errorEvents() {
 }
 
 void Events::resetErrorEvent() {
-   overCurrentV17 = 0;
-   overRatingV18 = 0;
+  overCurrentV17 = 0;
+  overRatingV18 = 0;
 
   // Add Master Reset Functionality
   digitalWrite(DRIVER_POWER_V11, LOW);

@@ -11,7 +11,6 @@ public:
   void InterruptSetup(int pin);
 
 private:
-  
 };
 
-#endif // ERROR_HANDLER_HPP
+#endif  // ERROR_HANDLER_HPP
