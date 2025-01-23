@@ -1,6 +1,8 @@
 #pragma once
 #include <Arduino.h>
 
+
+
 // #define ROTATION_SPEED_V6     //rotation speed (steps/sec) during normal operation ie rotation speed
 #define STEPS_PER_REV_V1  3200          //200 * 16 //number of steps/rev (360/1.8 = 200 in this case)
 #define R_SENSE           0.11f
@@ -13,6 +15,10 @@
 #define FAST_SPEED_V2_1                1000 // Speed for fast approach (steps/sec)
 #define SLOW_SPEEDV2_3                 500  // Speed for slow withdrawal (steps/sec)
 
+enum Modes {
+  TEST_MODE = 0,
+  RUN_MODE = 1
+};
 // extern int HAL_SENSOR_CON_RPM_V8;
 // extern int HOME_POSITION_V2_5;
 // extern int CURRENT_POSITION_FROM_HOME_V5;

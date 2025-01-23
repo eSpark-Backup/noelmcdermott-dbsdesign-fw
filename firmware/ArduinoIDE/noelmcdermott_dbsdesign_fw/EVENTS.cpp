@@ -6,6 +6,8 @@ int overRatingV18 = 0;
 
 void Events::setup(Display *dis) {
   display = dis;
+  pinMode(RESET_V9, INPUT);
+  pinMode(LIMIT_SWITCH, INPUT);
 }
 
 void Events::initialization() {

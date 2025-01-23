@@ -22,27 +22,40 @@ ErrorHandler errorHandler;
 TaskHandle_t Task1Handle;
 
 bool HomePositionRun = false;
-
-void Task1(void *parameter) {
-  while (true) {
-    lamda.LambdaSetup();
-    vTaskDelay(100);
-  }
-}
+volatile unsigned long lastcounttime = 0;
+unsigned long startTime;
 
 Button mode(MODE_SELECT_V12);
 
-enum Modes {
-  TEST_MODE = 0,
-  RUN_MODE = 1
-};
+void heatingUpO2Sensor() {
+  lastcounttime = millis();
+  while (millis() - lastcounttime <= 30000) {
+    lamda.LambdaSetup();
+    Led.O2StatusLED();
+    Serial.print("Counting time: ");
+    Serial.println(millis() - lastcounttime);
+  }
+}
+
+void checkingErrors()
+{ 
+  if (errorHandler.isError()) {
+      motor.stopStepper();
+      event.errorEvents();
+      while(digitalRead(RESET_V9) == 0) {  // if (errorHandler.checkResetButton(RESET_V9) == false) {
+          event.resetErrorEvent();
+          Serial.print("Reset button press\n");
+          }
+      }else {
+      motor.enableStepper();
+      }
+}
 
 void setup() {
   Serial.begin(115200);
   Serial.println("Starting setup...");
   show.init();
   event.setup(&show);
-  event.initialization();
   errorHandler.InterruptSetup(RESET_V9);
   Led.setup();
   mode.setup();
@@ -50,39 +63,13 @@ void setup() {
   motor.setup(&show, &encodr, &errorHandler, &lamda);
   lamda.setup();
   Serial.println("setup has done...");
-  motor.overCurrentEvent();
-  motor.outOfRangEvent();
   encodr.setup();
-
-  xTaskCreate(
-    Task1,                  // Function to implement the task
-    "Initializing Lambda",  // Name of the task
-    4096,                   // Stack size (in words, not bytes)
-    NULL,                   // Task input parameter
-    1,                      // Priority of the task
-    &Task1Handle            // Task handle
-  );
-
-  delay(20000);             // CHANGE TO 20 SEC
+  heatingUpO2Sensor();
+  checkingErrors();
+  motor.homePosition();
+      
 }
 void loop() {
-  /* check over current and out of range event flag is high */
-  if (errorHandler.isError()) {
-      motor.stopStepper();
-      event.errorEvents();
-      if (digitalRead(RESET_V9) == 0) {  // if (errorHandler.checkResetButton(RESET_V9) == false) {
-          event.resetErrorEvent();
-          Serial.print("Reset button press\n");
-          }
-      }
-else {
-    motor.enableStepper();
-    }
-    
-  if (HomePositionRun == false) {
-      motor.homePosition();
-      HomePositionRun = true;
-      }
 
   /* Check the mode "Run" or "Test" */
   Modes currentMode = static_cast<Modes>(mode.read());

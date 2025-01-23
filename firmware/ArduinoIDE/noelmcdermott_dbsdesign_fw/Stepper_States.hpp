@@ -23,6 +23,11 @@ class ErrorHandler;
 #define SW_MISO 12                 // Software Master In Slave Out (MISO)
 #define SW_SCK 14                  // Software Slave Clock (SCK)
 
+// enum Modes {
+//   TEST_MODE = 0,
+//   RUN_MODE = 1
+// };
+
 class Stepper {
 public:
   Stepper()
@@ -48,7 +53,12 @@ public:
   void enableStepper();
   bool outOfRangEvent();
   bool checkRPM();
-  float getConvCurrentV14() const;
+  // float getConvCurrentV14() const;
+  void inRange();
+  void outOfRange();
+  void runStepper(int speed, int steps);
+  void generateTone(int pin, int frequency, int duration);
+  // void updateModes();
 
 
 private:
@@ -71,4 +81,8 @@ private:
   int positionV2_4 = 0;
   unsigned long lastTime = 0;
   float rpm = 0;
+
+  // Button modeButton(MODE_SELECT_V12);
+  // Modes currentMode; 
+
 };

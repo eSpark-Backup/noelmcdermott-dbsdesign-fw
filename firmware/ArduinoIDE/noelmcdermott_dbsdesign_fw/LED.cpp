@@ -13,3 +13,10 @@ void DBS_LED::setup() {
   //   pinMode(CS_PIN, OUTPUT);
   pinMode(LAMBDA_CS1_PIN, OUTPUT);
 }
+
+void DBS_LED::O2StatusLED(){
+  digitalWrite(STATUS_02_LED, LOW);
+  delay(100);
+  digitalWrite(STATUS_02_LED, HIGH);
+  delay(100);
+}

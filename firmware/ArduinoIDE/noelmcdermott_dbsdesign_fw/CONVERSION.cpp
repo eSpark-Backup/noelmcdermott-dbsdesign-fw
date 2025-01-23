@@ -6,6 +6,8 @@ float Conversion::current_mA() {
   // Map the sensor value from 4mA (819) to 20mA (4095) range
   float current_mA = map(sensorValue, minADCValue, maxADCValue, 0, 24000);
   current_mA = current_mA / 1000.0f;
+  current_mA = round(current_mA * 10.0f) / 10.0f;
+  current_mA = max(current_mA, 0.0f);
   Serial.print("current_mA of sensor:");
   Serial.println(current_mA);
   return current_mA;
@@ -16,6 +18,8 @@ float Conversion::voltage_V() {
   // Map the sensor value from 0 (819) to 3.3 (4095) range
   float voltage = map(sensorValue, minADCValue, maxADCValue, 0, 3300);
   voltage = voltage / 1000.0f;
+  voltage = round(voltage * 10.0f) / 10.0f;
+  voltage = max(voltage, 0.0f);
   Serial.print("Volages of sensor:");
   Serial.println(voltage);
   return voltage;
