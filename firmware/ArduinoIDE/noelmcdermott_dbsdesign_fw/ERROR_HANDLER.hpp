@@ -1,16 +1,14 @@
 
 #ifndef ERROR_HANDLER_HPP
 #define ERROR_HANDLER_HPP
-#include <Arduino.h>
-#include "EVENTS.hpp"
 
 class ErrorHandler {
-public:
-  bool isError();
-  bool checkResetButton(int pin);
-  void InterruptSetup(int pin);
-
-private:
+  public:
+    bool isError();
+    bool checkResetButton(int pin);
+    void InterruptSetup(int pin);
+  private:
+    unsigned long lastPressTime = 0;
 };
 
 #endif  // ERROR_HANDLER_HPP

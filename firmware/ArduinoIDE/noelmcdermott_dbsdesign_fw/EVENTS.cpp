@@ -1,64 +1,71 @@
+#include "LED.hpp"
+#include <Arduino.h>
 #include "EVENTS.hpp"
+#include "variable_init.hpp"
 
-// Global variables
-int overCurrentV17 = 0;
-int overRatingV18 = 0;
+bool overRatingV18  = false;
+bool overCurrentV17 = false;
 
-void Events::setup(Display *dis) {
+void Events::setup(Display *dis)
+{
   display = dis;
   pinMode(RESET_V9, INPUT);
   pinMode(LIMIT_SWITCH, INPUT);
 }
 
-void Events::initialization() {
-  pinMode(RESET_V9, INPUT);
-  pinMode(LIMIT_SWITCH, INPUT);
-}
-
-Events::FaultEvent Events::getEvent() {
-  if (overCurrentV17 == 1 && overRatingV18 == 0) {
+Events::FaultEvent Events::getEvent()
+{
+  if (overCurrentV17 == 1 && overRatingV18 == 0)
+  {
     return OVER_CURRENT_ONLY;
-  } else if (overCurrentV17 == 0 && overRatingV18 == 1) {
+  }
+  else if (overCurrentV17 == 0 && overRatingV18 == 1)
+  {
     return OVER_RATING_ONLY;
-  } else if (overCurrentV17 == 1 && overRatingV18 == 1) {
+  }
+  else if (overCurrentV17 == 1 && overRatingV18 == 1)
+  {
     return BOTH_FAULTS;
-  } else {
+  }
+  else
+  {
     return NO_FAULT;
   }
 }
 
-void Events::errorEvents() {
+void Events::errorEvents()
+{
   digitalWrite(DRIVER_POWER_V11, HIGH);
   digitalWrite(KILL_RELAY_V10, LOW);
 
   // Toggle LED and Buzzer
-  if (millis() > soundTimer) {
+  if (millis() > soundTimer)
+  {
     soundTimer = millis() + 1000;
-    tone(TEST_LED, 500, 500);  // Tone of 500Hz for 500 milliseconds
+    tone(TEST_LED, 500, 500);
     tone(BUZZER_PIN, 500, 500);
     tone(RED_LED, 500, 500);
   }
 
   // Handle Faults
-  FaultEvent event = getEvent();
-
-  switch (event) {
+  switch(getEvent())
+  {
     case OVER_CURRENT_ONLY:
       handleOverCurrentOnly();
-      break;
+    break;
     case OVER_RATING_ONLY:
       handleOverRatingOnly();
-      break;
+    break;
     case BOTH_FAULTS:
       handleBothFaults();
-      break;
+    break;
     default:
-      // No fault or unknown fault condition
-      break;
+    break;
   }
 }
 
-void Events::resetErrorEvent() {
+void Events::resetErrorEvent()
+{
   overCurrentV17 = 0;
   overRatingV18 = 0;
 
@@ -76,7 +83,8 @@ void Events::resetErrorEvent() {
   display->show("SELECT MODE RUN/TEST", 2);
 }
 
-void Events::handleOverCurrentOnly() {
+void Events::handleOverCurrentOnly()
+{
   display->show("CRITICAL FAULT", 0);
   display->show("E1:OVERCURRENT", 1);
   display->show("MANUAL RESET REQD", 2);
@@ -90,7 +98,8 @@ void Events::handleOverCurrentOnly() {
   delay(3000);
 }
 
-void Events::handleOverRatingOnly() {
+void Events::handleOverRatingOnly()
+{
   display->show("CRITICAL FAULT", 0);
   display->show("E2:PAST V3/V4 LIMITS", 1);
   display->show("MANUAL RESET REQD", 2);
@@ -103,7 +112,8 @@ void Events::handleOverRatingOnly() {
   display->show("CHK VALUES V3/V4/V5", 3);
 }
 
-void Events::handleBothFaults() {
+void Events::handleBothFaults()
+{
   display->show("CRITICAL FAULT", 0);
   display->show("FAULT: E1 and/or E2", 1);
   display->show("MANUAL RESET REQD", 2);

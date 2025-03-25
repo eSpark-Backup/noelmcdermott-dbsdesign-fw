@@ -1,31 +1,34 @@
+#include <Arduino.h>
 #include "CONVERSION.hpp"
 
-
-float Conversion::current_mA() {
-  int sensorValue = analogRead(EXTERNAL_INPUT);
-  // Map the sensor value from 4mA (819) to 20mA (4095) range
-  float current_mA = map(sensorValue, minADCValue, maxADCValue, 0, 24000);
-  current_mA = current_mA / 1000.0f;
-  current_mA = round(current_mA * 10.0f) / 10.0f;
-  current_mA = max(current_mA, 0.0f);
-  Serial.print("current_mA of sensor:");
-  Serial.println(current_mA);
+float Conversion::current_mA()
+{
+  // int sensorValue = analogRead(EXTERNAL_INPUT);
+  uint16_t sensorValue = 3550;
+  // Map the sensor value from 4mA (819) to 20mA (3550) range
+  float current_mA = map(sensorValue, minADCValue, maxADCValue, 0, 24000) / 1000.0f;
+  current_mA = max((round(current_mA * 10.0f) / 10.0f), 0.0f);
+  Serial.print("Sensor Current:");
+  Serial.print(current_mA);
+  Serial.println("mA");
   return current_mA;
 }
 
-float Conversion::voltage_V() {
-  int sensorValue = analogRead(EXTERNAL_INPUT);
+float Conversion::voltage_V()
+{
+  // uint16_t sensorValue = analogRead(EXTERNAL_INPUT);
+  uint16_t sensorValue = 4095;
   // Map the sensor value from 0 (819) to 3.3 (4095) range
-  float voltage = map(sensorValue, minADCValue, maxADCValue, 0, 3300);
-  voltage = voltage / 1000.0f;
-  voltage = round(voltage * 10.0f) / 10.0f;
-  voltage = max(voltage, 0.0f);
-  Serial.print("Volages of sensor:");
-  Serial.println(voltage);
+  float voltage = map(sensorValue, minADCValue, maxADCValue, 0, 3300) / 1000.0f;
+  voltage = max((round(voltage * 10.0f) / 10.0f),0.0f);
+  Serial.print("Sensor Voltage:");
+  Serial.print(voltage);
+  Serial.println("V");
   return voltage;
 }
 
-float Conversion::readExternalInput(Scale scale) {
+float Conversion::readExternalInput(Scale scale)
+{
   if (scale == Scale::MilliAmp) {
     return current_mA();
   } else if (scale == Scale::Voltage) {

@@ -1,14 +1,11 @@
 #ifndef LAMBDA_RPM_HPP
 #define LAMBDA_RPM_HPP
 
-#include <Arduino.h>
-
 #include <Lambda_rpm.h>
-#include "LED.hpp"
 
-#define SW_MOSI 13  // Software Master Out Slave In (MOSI)
-#define SW_MISO 12  // Software Master In Slave Out (MISO)
-#define SW_SCK 14   // Software Slave Clock (SCK)
+#define SW_MOSI 13
+#define SW_MISO 12
+#define SW_SCK  14 
 
 class Stepper;
 
@@ -21,8 +18,12 @@ public:
   void LambdaSetup();
 
 private:
+  int    rpmValue = 0;
+  float  O2Value  = 0.0;
+  float  AFRValue = 0.0;
+  String State_value = "NONE";
+
   Lambda_rpm lamda;
 };
-
 
 #endif  // LAMBDA_RPM_HPP

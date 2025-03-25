@@ -1,47 +1,35 @@
 #pragma once
-#include <Arduino.h>
-#include "LED.hpp"
-#include "EVENTS.hpp"
-#include "CONVERSION.hpp"
-#include <TMCStepper.h>
-#include "variable_init.hpp"
-#include "DISPLAY.hpp"
+
 #include "ENCODER.hpp"
-#include "ERROR_HANDLER.hpp"
-#include "BUTTON.hpp"
+#include "DISPLAY.hpp"
+#include <TMCStepper.h>
 #include "LAMBDA_RPM.hpp"
+#include "ERROR_HANDLER.hpp"
+#include "variable_init.hpp"
 
 class Encoder;
 class ErrorHandler;
 
-#define MAX_DRIVER_CURRENT_V16 20  //(20mA) maximum allowable driver current
-#define DRIVER_POWER_V11 11        // Enable PIN
-#define DIR_PIN 10                 // Direction
-#define STEP_PIN 9                 // Step
-#define CS_PIN 15                  // Chip select
-#define SW_MOSI 13                 // Software Master Out Slave In (MOSI)
-#define SW_MISO 12                 // Software Master In Slave Out (MISO)
-#define SW_SCK 14                  // Software Slave Clock (SCK)
-
-// enum Modes {
-//   TEST_MODE = 0,
-//   RUN_MODE = 1
-// };
+#define DIR_PIN 10
+#define STEP_PIN 9
+#define CS_PIN  15 
+#define SW_MOSI 13
+#define SW_MISO 12
+#define SW_SCK  14 
 
 class Stepper {
 public:
   Stepper()
     : driver(CS_PIN) {
-    SPI.begin(SW_SCK, SW_MISO, SW_MOSI);  // Initialize SPI
-    driver.begin();                       // Initialize driver with default settings
-    driver.rms_current(1000);             // Set motor RMS current
+    SPI.begin(SW_SCK, SW_MISO, SW_MOSI);
+    driver.begin();
+    driver.rms_current(1000);
     driver.en_pwm_mode(1);
     driver.microsteps(16);
     digitalWrite(DRIVER_POWER_V11, LOW);
   };
 
   void stepperInitialize();
-  void setup(Display *dis, Encoder *enc, ErrorHandler *error, Lambda *lam);
   void homePosition();
   void run();
   void test();
@@ -53,16 +41,13 @@ public:
   void enableStepper();
   bool outOfRangEvent();
   bool checkRPM();
-  // float getConvCurrentV14() const;
   void inRange();
   void outOfRange();
   void runStepper(int speed, int steps);
   void generateTone(int pin, int frequency, int duration);
-  // void updateModes();
-
 
 private:
-  TMC2160Stepper driver;  // Member object
+  TMC2160Stepper driver;
   Display *display = new Display();
   Encoder *encoder;
   ErrorHandler *errorHand;
@@ -81,8 +66,4 @@ private:
   int positionV2_4 = 0;
   unsigned long lastTime = 0;
   float rpm = 0;
-
-  // Button modeButton(MODE_SELECT_V12);
-  // Modes currentMode; 
-
 };

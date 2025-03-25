@@ -1,8 +1,4 @@
-
 #pragma once
-#include <Arduino.h>
-#include "EVENTS.hpp"
-#include "variable_init.hpp"
 
 #define minADCValue 819   // Approximate value for 4mA
 #define maxADCValue 4095  // Approximate value for 20mA
