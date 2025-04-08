@@ -44,16 +44,14 @@ public:
   void inRange();
   void outOfRange();
   void runStepper(int speed, int steps);
-  void generateTone(int pin, int frequency, int duration);
 
 private:
   TMC2160Stepper driver;
   Display *display = new Display();
   Encoder *encoder;
-  ErrorHandler *errorHand;
+  ErrorHandler *errorHand = new ErrorHandler();
   Lambda *lamd = new Lambda();
   float ENCODER_VAL_IN_VOLT_V13;
-  unsigned long soundTimer;
   int currentPositionFromHomeV5 = 0;
   int position22 = 0;
   int homePositionV2_5 = 0;

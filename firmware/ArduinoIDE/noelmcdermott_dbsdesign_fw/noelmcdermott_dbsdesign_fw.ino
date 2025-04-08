@@ -8,7 +8,7 @@
 #include "ERROR_HANDLER.hpp"
 #include "Stepper_States.hpp"
 
-#define INITIAL_DELAY (20*1000)
+#define INITIAL_DELAY (5*1000)
 
 unsigned long startTime;
 bool HomePositionRun = false;
@@ -92,12 +92,22 @@ void loop()
     Serial.println("SELECTED TEST MODE.");
     motor.test();
   }
-  else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true))
-  {
-    motor.test();
-  }
-  else if ((currentMode == RUN_MODE) && (motor.checkRPM() == true))
-  {
-    motor.run();
-  }
+  // switch(static_cast<Modes>(mode.read()))
+  // {
+  //   case TEST_MODE:
+  //   break;
+  //   case RUN_MODE:
+  //   break;
+  //   default:
+  //   break;
+  // }
+  // else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true))
+  // {
+  //   motor.test();
+  // }
+  // else if ((currentMode == RUN_MODE) && (motor.checkRPM() == true))
+  // {
+  //   motor.run();
+  // }
+  // delay(1000);
 }

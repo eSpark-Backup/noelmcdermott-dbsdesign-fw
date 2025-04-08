@@ -44,7 +44,6 @@ bool ErrorHandler::checkResetButton(int pin)
     if (currentTime - ErrorHandler::lastPressTime <= doublePressInterval && ErrorHandler::lastPressTime != 0)
     {
       Serial.println("Double press detected. Press count: TRUE ");
-
       ErrorHandler::lastPressTime = 0;
       return false;
     }
@@ -52,7 +51,8 @@ bool ErrorHandler::checkResetButton(int pin)
     {
       // First press in sequence
       Serial.println("Single press detected.");
-      ErrorHandler::lastPressTime = currentTime;
+      lastPressTime = currentTime;
+      return true;
     }
   }
   return true;

@@ -1,10 +1,10 @@
 #include <Arduino.h>
 #include "CONVERSION.hpp"
+#include "variable_init.hpp"
 
 float Conversion::current_mA()
 {
-  // int sensorValue = analogRead(EXTERNAL_INPUT);
-  uint16_t sensorValue = 3550;
+  uint16_t sensorValue = analogRead(EXTERNAL_INPUT);
   // Map the sensor value from 4mA (819) to 20mA (3550) range
   float current_mA = map(sensorValue, minADCValue, maxADCValue, 0, 24000) / 1000.0f;
   current_mA = max((round(current_mA * 10.0f) / 10.0f), 0.0f);
@@ -16,8 +16,7 @@ float Conversion::current_mA()
 
 float Conversion::voltage_V()
 {
-  // uint16_t sensorValue = analogRead(EXTERNAL_INPUT);
-  uint16_t sensorValue = 4095;
+  uint16_t sensorValue = analogRead(EXTERNAL_INPUT);
   // Map the sensor value from 0 (819) to 3.3 (4095) range
   float voltage = map(sensorValue, minADCValue, maxADCValue, 0, 3300) / 1000.0f;
   voltage = max((round(voltage * 10.0f) / 10.0f),0.0f);

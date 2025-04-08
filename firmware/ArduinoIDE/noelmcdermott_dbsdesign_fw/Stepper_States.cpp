@@ -4,7 +4,7 @@
 
 Conversion converter;
 
-void Stepper::generateTone(int pin, int frequency, int duration)
+static void generateTone(int pin, int frequency, int duration)
 {
   int period = 1000000 / frequency;
   int cycles = (duration * 1000) / period;
@@ -18,7 +18,7 @@ void Stepper::generateTone(int pin, int frequency, int duration)
   }
 }
 
-void generateTone_3(int pin1, int pin2, int frequency, int duration)
+static void generateTone_3(int pin1, int pin2, int frequency, int duration)
 {
   int period = 1000000 / frequency;
   int cycles = (duration * 1000) / period;
@@ -33,7 +33,7 @@ void generateTone_3(int pin1, int pin2, int frequency, int duration)
   }
 }
 
-void stopTone(int pin)
+static void stopTone(int pin)
 {
   digitalWrite(pin, LOW);
 }
@@ -98,11 +98,21 @@ void Stepper::test()
   {
     ENCODER_VAL_IN_VOLT_V13 = encoder->getEncoderVoltage();
   }
+  digitalWrite(KILL_RELAY_V10, LOW);
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(RUN_LED, LOW);
 
-  if (errorHand->checkResetButton(RESET_V9) == false)  // press button for two second
+  if(errorHand->checkResetButton(RESET_V9) == false)
   {
+    digitalWrite(KILL_RELAY_V10, LOW);
+    stopTone(BUZZER_PIN);
+    stopTone(TEST_LED);
+    stopTone(RED_LED);
+    digitalWrite(GREEN_LED, HIGH);
+
     v7ConvAfrV73 = lamd->getAF();
     halSensorConRpmV8 = lamd->getRPM();
+
     /*Display*/
     display->clear();
     display->show("Mode = TEST", 0);
@@ -112,12 +122,6 @@ void Stepper::test()
     display->show(message2, 2);
     String message3 = "A/F = " + String(v7ConvAfrV73);
     display->show(message3, 3);
-
-    digitalWrite(KILL_RELAY_V10, LOW);
-    stopTone(BUZZER_PIN);
-    stopTone(TEST_LED);
-    stopTone(RED_LED);
-    digitalWrite(GREEN_LED, HIGH);
 
     /*IMPLEMENTATION OF RUNNING STEPPER IN PENDING*/
     int targetPosition = map(ENCODER_VAL_IN_VOLT_V13 * 1000, MIN_VOLT_V14, MAX_VOLT_V14 * 1000, CLOCKWISE_STEP_FROM_HOME_V3, MAX_NUMB_STEP_FROM_HOME_V4);
@@ -136,33 +140,24 @@ void Stepper::test()
       Serial.print("The updated current position of V5 is: ");
       Serial.println(currentPositionFromHomeV5);
     }
-    if (Stepper::outOfRangEvent() == 0)
+
+    if (Stepper::outOfRangEvent())
     {
       digitalWrite(KILL_RELAY_V10, LOW);
-      digitalWrite(TEST_LED, HIGH);     
-      digitalWrite(GREEN_LED, LOW);     
+      digitalWrite(TEST_LED, LOW);       
+      digitalWrite(GREEN_LED, HIGH);     
     }
     else
     {
       digitalWrite(KILL_RELAY_V10, HIGH);
-      digitalWrite(TEST_LED, LOW);       
-      digitalWrite(GREEN_LED, HIGH);     
+      digitalWrite(TEST_LED, HIGH);     
+      digitalWrite(GREEN_LED, LOW);     
     }
-    delay(3000);
+    delay(300);
     display->clear();
   }
   else
   {
-    if (millis() > soundTimer)
-    {
-      soundTimer = millis() + 1000;
-      generateTone_3(TEST_LED, RED_LED, 1000, 800);
-      generateTone(BUZZER_PIN, 500, 500);
-    }
-    digitalWrite(KILL_RELAY_V10, LOW);
-    digitalWrite(GREEN_LED, LOW);
-    digitalWrite(RUN_LED, LOW);
-
     /*Display result*/
     if (ENCODER_VAL_IN_VOLT_V13 == MIN_VOLT_V14)
     {
@@ -188,7 +183,6 @@ void Stepper::test()
 /*RUN MODE*/
 void Stepper::run()
 {
-  convCurrentV14 = converter.readExternalInput(Conversion::Scale::MilliAmp);
   convVoltageV14 = converter.readExternalInput(Conversion::Scale::Voltage);
   int targetPos= map(convVoltageV14 * 1000, MIN_VOLT_V14, MAX_VOLT_V14 * 1000, CLOCKWISE_STEP_FROM_HOME_V3, MAX_NUMB_STEP_FROM_HOME_V4);
   Serial.print("Target Positions:");
