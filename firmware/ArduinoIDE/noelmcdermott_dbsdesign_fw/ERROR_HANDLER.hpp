@@ -4,7 +4,6 @@
 
 class ErrorHandler {
   public:
-    bool isError();
     bool checkResetButton(int pin);
     void InterruptSetup(int pin);
   private:

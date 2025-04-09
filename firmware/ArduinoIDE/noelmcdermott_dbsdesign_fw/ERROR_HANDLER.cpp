@@ -8,11 +8,6 @@
 /*third implmentations*/
 volatile bool buttonPressed = false;
 
-bool ErrorHandler::isError()
-{
-  return ((overCurrentV17 == 1) || (overRatingV18 == 1));
-}
-
 /*ISR */
 void buttonPressISR()
 {

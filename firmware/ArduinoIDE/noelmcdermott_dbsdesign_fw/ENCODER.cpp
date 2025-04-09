@@ -28,7 +28,7 @@ float Encoder::getEncoderVoltage()
   Serial.println(position);
   
   double positionfloat = (position * MAX_VOLTAGE) / MAX_ENCODER_VAL;
-  positionfloat = min(positionfloat, MAX_VOLTAGE);
+  positionfloat = max(MIN_VOLTAGE ,min(positionfloat, MAX_VOLTAGE));
   Serial.print("The voltage of encoder is:");
   Serial.println(positionfloat);
 

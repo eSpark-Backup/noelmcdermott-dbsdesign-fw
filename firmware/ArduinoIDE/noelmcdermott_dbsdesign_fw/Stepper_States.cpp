@@ -1,6 +1,6 @@
-#include "Stepper_States.hpp"
-#include "CONVERSION.hpp"
 #include "BUTTON.hpp"
+#include "CONVERSION.hpp"
+#include "Stepper_States.hpp"
 
 Conversion converter;
 
@@ -68,6 +68,7 @@ void Stepper::stepperInitialize()
 
 void Stepper::homePosition()
 {
+  display->clear();
   display->show("  FIRMWARE  ", 0);
   display->show("  STARTED.. ", 1);
   Button limitSwitch(LIMIT_SWITCH);
@@ -84,6 +85,11 @@ void Stepper::homePosition()
   homePositionV2_5 = 0;
 }
 
+void Stepper::setEncoderButtonState(bool state)
+{ 
+  encoder.button_state = state;
+}
+
 /*implementation of Test Mode*/
 void Stepper::test()
 {
@@ -96,14 +102,12 @@ void Stepper::test()
   }
   else
   {
-    ENCODER_VAL_IN_VOLT_V13 = encoder->getEncoderVoltage();
+    ENCODER_VAL_IN_VOLT_V13 = encoder.getEncoderVoltage();
   }
-  digitalWrite(KILL_RELAY_V10, LOW);
-  digitalWrite(GREEN_LED, LOW);
-  digitalWrite(RUN_LED, LOW);
 
   if(errorHand->checkResetButton(RESET_V9) == false)
   {
+    encoder.button_state = 1;
     digitalWrite(KILL_RELAY_V10, LOW);
     stopTone(BUZZER_PIN);
     stopTone(TEST_LED);
@@ -158,6 +162,19 @@ void Stepper::test()
   }
   else
   {
+    if(!encoder.button_state)
+    {
+      if (millis() > soundTimer)
+      {
+        soundTimer = millis() + 1000;
+        generateTone_3(TEST_LED, RED_LED, 1000, 800);
+        generateTone(BUZZER_PIN, 500, 500);
+      }
+      digitalWrite(KILL_RELAY_V10, LOW);
+      digitalWrite(GREEN_LED, LOW);
+      digitalWrite(RUN_LED, LOW);
+    }
+
     /*Display result*/
     if (ENCODER_VAL_IN_VOLT_V13 == MIN_VOLT_V14)
     {
@@ -189,25 +206,26 @@ void Stepper::run()
   Serial.println(targetPos);
   if (currentPositionFromHomeV5 != targetPos)
   {
+
     int stepsToMove = (targetPos - currentPositionFromHomeV5) * 16;  //255
     Serial.print("The steps to move are: ");
     Serial.println(stepsToMove);
+    currentPositionFromHomeV5 = targetPos;
+    /* Display the result*/
+    if (Stepper::outOfRangEvent() == 0)
+    {
+      outOfRange();
+    }
+    else
+    {
+      inRange();
+    }
     digitalWrite(DIR_PIN, (stepsToMove > 0) ? LOW : HIGH);
     runStepper(ROTATION_SPEED_STEP_PR_SEC_V6, abs(stepsToMove));
-    currentPositionFromHomeV5 = targetPos;
     Serial.print("The updated current position of V5 is: ");
     Serial.println(currentPositionFromHomeV5);
   }
 
-  /* Display the result*/
-  if (Stepper::outOfRangEvent() == 0)
-  {
-    outOfRange();
-  }
-  else
-  {
-    inRange();
-  }
   v7ConvAfrV73 = lamd->getAF();
   halSensorConRpmV8 = lamd->getRPM();
   display->show("Mode = Run", 0);
@@ -222,7 +240,7 @@ void Stepper::run()
 void Stepper::moveClockwise(int speed)
 {
   driver.shaft(0);
-  Serial.print("Running motor clockwise\n");
+  Serial.println("Running motor clockwise");
   for (int i = 0; i < STEPS_PER_REV_V1; i++)
   {
     digitalWrite(STEP_PIN, HIGH);
@@ -235,7 +253,7 @@ void Stepper::moveClockwise(int speed)
 void Stepper::moveAnticlockwise(int speed)
 {
   driver.shaft(1);
-  Serial.print("Running motor anticlockwise\n");
+  Serial.println("Running motor anticlockwise");
   for (int i = 0; i < STEPS_PER_REV_V1; i++)
   {
     digitalWrite(STEP_PIN, HIGH);
@@ -247,7 +265,7 @@ void Stepper::moveAnticlockwise(int speed)
 
 void Stepper::runStepper(int speed, int step)
 {
-  Serial.print("Running motor....\n");
+  Serial.println("Running motor....");
   for (int i = 0; i < step; i++)
   {
     digitalWrite(STEP_PIN, HIGH);
@@ -280,16 +298,37 @@ bool Stepper::overCurrentEvent()
 
 bool Stepper::outOfRangEvent()
 {
-  if (currentPositionFromHomeV5 >= CLOCKWISE_STEP_FROM_HOME_V3 && currentPositionFromHomeV5 <= MAX_NUMB_STEP_FROM_HOME_V4)
-  {
-    overRatingV18 = false;
-  }
-  else
+  if (currentPositionFromHomeV5 < CLOCKWISE_STEP_FROM_HOME_V3 || currentPositionFromHomeV5 > MAX_NUMB_STEP_FROM_HOME_V4)
   {
     overRatingV18 = true;
   }
+  else
+  {
+    overRatingV18 = false;
+  }
   return overRatingV18;
 }
+
+bool Stepper::getoverCurrentV17()
+{
+  return overCurrentV17;
+}
+
+bool Stepper::getoverRatingV18()
+{
+  return overRatingV18;
+}
+
+void Stepper::setoverCurrentV17(bool state)
+{
+  overCurrentV17 = state;
+}
+
+void Stepper::setoverRatingV18(bool state)
+{
+  overRatingV18 = state;
+}
+
 
 void Stepper::stopStepper()
 {

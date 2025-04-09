@@ -3,27 +3,27 @@
 #include "EVENTS.hpp"
 #include "variable_init.hpp"
 
-bool overRatingV18  = false;
-bool overCurrentV17 = false;
+TaskHandle_t alert_task_handle = NULL;
 
-void Events::setup(Display *dis)
+void Events::setup(Display *dis, Stepper *step)
 {
   display = dis;
+  stepper_motor = step;
   pinMode(RESET_V9, INPUT);
   pinMode(LIMIT_SWITCH, INPUT);
 }
 
 Events::FaultEvent Events::getEvent()
 {
-  if (overCurrentV17 == 1 && overRatingV18 == 0)
+  if (stepper_motor->getoverCurrentV17() == 1 && stepper_motor->getoverRatingV18() == 0)
   {
     return OVER_CURRENT_ONLY;
   }
-  else if (overCurrentV17 == 0 && overRatingV18 == 1)
+  else if (stepper_motor->getoverCurrentV17() == 0 && stepper_motor->getoverRatingV18() == 1)
   {
     return OVER_RATING_ONLY;
   }
-  else if (overCurrentV17 == 1 && overRatingV18 == 1)
+  else if (stepper_motor->getoverCurrentV17() == 1 && stepper_motor->getoverRatingV18() == 1)
   {
     return BOTH_FAULTS;
   }
@@ -33,20 +33,35 @@ Events::FaultEvent Events::getEvent()
   }
 }
 
+void alert_led_task(void *pvParameters)
+{
+  // Toggle LED and Buzzer
+  unsigned long buzzTimer = 0;
+  while(1)
+  {
+    digitalWrite(RED_LED, LOW);
+    delay(500);
+    if (millis() > buzzTimer)
+    {
+      buzzTimer = millis() + 1000;
+      tone(BUZZER_PIN, 500, 500);
+    }
+    digitalWrite(RED_LED, HIGH);
+    delay(500);
+  }
+}
+
 void Events::errorEvents()
 {
   digitalWrite(DRIVER_POWER_V11, HIGH);
   digitalWrite(KILL_RELAY_V10, LOW);
+  digitalWrite(GREEN_LED, LOW);
+  digitalWrite(RUN_LED, LOW);
+  digitalWrite(TEST_LED, LOW);
 
-  // Toggle LED and Buzzer
-  if (millis() > soundTimer)
-  {
-    soundTimer = millis() + 1000;
-    tone(TEST_LED, 500, 500);
-    tone(BUZZER_PIN, 500, 500);
-    tone(RED_LED, 500, 500);
-  }
-
+  if(!alert_task_handle)
+    xTaskCreate(alert_led_task, "alert_led", 1000, NULL, 1, &alert_task_handle);
+  
   // Handle Faults
   switch(getEvent())
   {
@@ -66,8 +81,9 @@ void Events::errorEvents()
 
 void Events::resetErrorEvent()
 {
-  overCurrentV17 = 0;
-  overRatingV18 = 0;
+  vTaskDelete(alert_task_handle);
+  stepper_motor->setoverCurrentV17(0);
+  stepper_motor->setoverRatingV18(0);
 
   // Add Master Reset Functionality
   digitalWrite(DRIVER_POWER_V11, LOW);
@@ -81,6 +97,7 @@ void Events::resetErrorEvent()
   delay(1000);
   display->show("NORMAL OPERATION", 1);
   display->show("SELECT MODE RUN/TEST", 2);
+  delay(1000);
 }
 
 void Events::handleOverCurrentOnly()

@@ -44,19 +44,26 @@ public:
   void inRange();
   void outOfRange();
   void runStepper(int speed, int steps);
+  void setEncoderButtonState(bool state);
+  void setoverRatingV18(bool state);
+  void setoverCurrentV17(bool state);
+  bool getoverRatingV18();
+  bool getoverCurrentV17();
 
 private:
   TMC2160Stepper driver;
   Display *display = new Display();
-  Encoder *encoder;
+  Encoder encoder;
   ErrorHandler *errorHand = new ErrorHandler();
   Lambda *lamd = new Lambda();
+
   float ENCODER_VAL_IN_VOLT_V13;
+  unsigned long soundTimer;
   int currentPositionFromHomeV5 = 0;
   int position22 = 0;
   int homePositionV2_5 = 0;
-  int overCurrentV17 = 0;
-  int overRatingV18 = 0;
+  bool overCurrentV17 = 0;
+  bool overRatingV18 = 0;
   float v7ConvAfrV73 = 0;
   int halSensorConRpmV8 = 0;
   float convVoltageV14 = 0;

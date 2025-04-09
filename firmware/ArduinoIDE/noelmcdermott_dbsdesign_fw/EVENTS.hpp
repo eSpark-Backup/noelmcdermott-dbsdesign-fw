@@ -1,16 +1,15 @@
 #pragma once
 #include "DISPLAY.hpp"
+#include "Stepper_States.hpp"
 
 class Events
 {
   public:
-    void setup(Display *dis);
+    void setup(Display *dis, Stepper *step);
     void errorEvents();
     void resetErrorEvent();
 
   private:
-    unsigned long soundTimer = 0;
-    
     enum FaultEvent {
       NO_FAULT,
       OVER_CURRENT_ONLY,
@@ -24,4 +23,5 @@ class Events
     void handleBothFaults();
 
     Display *display;
+    Stepper *stepper_motor;
 };  

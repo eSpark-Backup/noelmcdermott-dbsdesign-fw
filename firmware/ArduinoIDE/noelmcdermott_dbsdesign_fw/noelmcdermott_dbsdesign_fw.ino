@@ -8,7 +8,7 @@
 #include "ERROR_HANDLER.hpp"
 #include "Stepper_States.hpp"
 
-#define INITIAL_DELAY (5*1000)
+#define INITIAL_DELAY (20*1000)
 
 unsigned long startTime;
 bool HomePositionRun = false;
@@ -21,7 +21,6 @@ Display UI;
 Encoder encodr;
 Lambda lamda;
 ErrorHandler errorHandler;
-TaskHandle_t Task1Handle;
 
 Button mode(MODE_SELECT_V12);
 
@@ -37,21 +36,55 @@ void heatingUpO2Sensor()
   }
 }
 
-void checkingErrors()
-{ 
-  if (errorHandler.isError())
+bool checkingErrors()
+{
+  if (motor.overCurrentEvent() || motor.outOfRangEvent())
   {
+    Serial.println("Errors found!");
     motor.stopStepper();
     event.errorEvents();
-    while(digitalRead(RESET_V9) == 0)
+
+    int pressCount = 0;
+    unsigned long firstPressTime = 0;
+
+    while (pressCount < 2)
     {
-      event.resetErrorEvent();
-      Serial.print("Reset button press\n");
+      if (digitalRead(RESET_V9) == LOW)  // Assuming LOW means pressed
+      {
+        while (digitalRead(RESET_V9) == LOW); // Wait for button release
+        delay(20); // debounce
+
+        if (pressCount == 0)
+        {
+          firstPressTime = millis();
+        }
+
+        pressCount++;
+        Serial.print("Press count: ");
+        Serial.println(pressCount);
+      }
+
+      // Timeout after 2 seconds
+      if (pressCount > 0 && millis() - firstPressTime > 2000)
+      {
+        Serial.println("Double press timeout!");
+        break;
+      }
     }
+
+    if (pressCount == 2)
+    {
+      Serial.println("Double press detected!");
+      event.resetErrorEvent();  // Call reset only if button pressed twice
+    }
+
+    return true;
   }
   else
   {
+    Serial.println("No Errors found!");
     motor.enableStepper();
+    return false;
   }
 }
 
@@ -60,7 +93,7 @@ void setup()
   Serial.begin(115200);
   Serial.println("Starting setup...");
   UI.init();
-  event.setup(&UI);
+  event.setup(&UI, &motor);
   errorHandler.InterruptSetup(RESET_V9);
   Led.setup();
   mode.setup();
@@ -69,45 +102,41 @@ void setup()
   Serial.println("setup has done...");
   encodr.setup();
   heatingUpO2Sensor();
-  checkingErrors();
-  motor.homePosition();
+  delay(3000);
+  while(1)
+  {
+    if(checkingErrors()) {
+    }
+    else {
+      motor.homePosition();
+      break;
+    }
+  }
 }
 
 void loop()
 {
-  /* Check the mode "Run" or "Test" */
-  Modes currentMode = static_cast<Modes>(mode.read());
-  Serial.println("MODE SELECTION...");
-  Serial.println(currentMode);
-  /*  check the mode "Run" or "Test"  */
-  if (currentMode == RUN_MODE)
+  if(checkingErrors())
   {
-    /*Run Mode*/
-    Serial.println("SELECTED RUN MODE.");
-    motor.run();
+    Serial.println("Fault State!");
   }
-  else if (currentMode == TEST_MODE)
+  else
   {
-    /*Test mode */
-    Serial.println("SELECTED TEST MODE.");
-    motor.test();
+    switch(static_cast<Modes>(mode.read()))
+    {
+      case TEST_MODE:
+        /*Test mode */
+        Serial.println("SELECTED TEST MODE.");
+        motor.test();
+      break;
+      case RUN_MODE:
+        /*Run Mode*/
+        Serial.println("SELECTED RUN MODE.");
+        motor.run();
+      break;
+      default:
+      break;
+    }
   }
-  // switch(static_cast<Modes>(mode.read()))
-  // {
-  //   case TEST_MODE:
-  //   break;
-  //   case RUN_MODE:
-  //   break;
-  //   default:
-  //   break;
-  // }
-  // else if ((currentMode == TEST_MODE) && (motor.checkRPM() == true))
-  // {
-  //   motor.test();
-  // }
-  // else if ((currentMode == RUN_MODE) && (motor.checkRPM() == true))
-  // {
-  //   motor.run();
-  // }
-  // delay(1000);
+  delay(100);
 }

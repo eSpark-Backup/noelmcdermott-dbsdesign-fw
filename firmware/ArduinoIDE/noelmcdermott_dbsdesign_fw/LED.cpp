@@ -14,9 +14,9 @@ void DBS_LED::setup()
 void DBS_LED::O2StatusLED()
 {
   digitalWrite(STATUS_02_LED, LOW);
-  Serial.print("STATUS LOW");
+  Serial.println("STATUS LOW");
   delay(100);
   digitalWrite(STATUS_02_LED, HIGH);
-  Serial.print("STATUS HIGH");
+  Serial.println("STATUS HIGH");
   delay(100);
 }
