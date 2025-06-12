@@ -15,7 +15,7 @@
 #define RESET_V9                        48
         
 #define DRIVER_POWER_V11                11        // Enable PIN
-#define MAX_DRIVER_CURRENT_V16          20        //(20mA) maximum allowable driver current
+#define MAX_DRIVER_CURRENT_V16          5000        //(500mA) maximum allowable driver current
         
 #define STEPS_PER_REV_V1               3200          //200 * 16 //number of steps/rev (360/1.8 = 200 in this case)
 #define R_SENSE                        0.11f

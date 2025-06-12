@@ -8,8 +8,8 @@
 #include "ERROR_HANDLER.hpp"
 #include "Stepper_States.hpp"
 
-#define INITIAL_DELAY (20*1000)
-
+TaskHandle_t lambdaTaskHandle;
+#define INITIAL_DELAY (21*1000)
 unsigned long startTime;
 bool HomePositionRun = false;
 volatile unsigned long lastcounttime = 0;
@@ -23,6 +23,14 @@ Lambda lamda;
 ErrorHandler errorHandler;
 
 Button mode(MODE_SELECT_V12);
+
+// Task function to read lambda data
+void lambdaTask(void *parameter){
+  while(true){
+    lamda.LambdaSetup();
+    vTaskDelay(10);
+  }
+}
 
 void heatingUpO2Sensor()
 {
@@ -112,10 +120,20 @@ void setup()
       break;
     }
   }
+      // Create the FreeRTOS task
+  xTaskCreate(
+    lambdaTask,         // Task function
+    "Lambda Task",      // Name
+    4096,               // Stack size
+    NULL,               // Parameters
+    5,                  // Priority
+    &lambdaTaskHandle   // Task handle
+  );
 }
 
 void loop()
 {
+  
   if(checkingErrors())
   {
     Serial.println("Fault State!");

@@ -3,6 +3,7 @@
 #include "Stepper_States.hpp"
 
 Conversion converter;
+volatile bool modeTriggered = false;
 
 static void generateTone(int pin, int frequency, int duration)
 {
@@ -93,6 +94,7 @@ void Stepper::setEncoderButtonState(bool state)
 /*implementation of Test Mode*/
 void Stepper::test()
 {
+  modeTriggered = false;
   ENCODER_VAL_IN_VOLT_V13 = MIN_VOLT_V14;
   if (halSensorConRpmV8 > 0)
   {
@@ -204,6 +206,10 @@ void Stepper::run()
   int targetPos= map(convVoltageV14 * 1000, MIN_VOLT_V14, MAX_VOLT_V14 * 1000, CLOCKWISE_STEP_FROM_HOME_V3, MAX_NUMB_STEP_FROM_HOME_V4);
   Serial.print("Target Positions:");
   Serial.println(targetPos);
+  if(!modeTriggered){
+    display->clear();
+    modeTriggered = true;
+  }
   if (currentPositionFromHomeV5 != targetPos)
   {
 
@@ -225,7 +231,6 @@ void Stepper::run()
     Serial.print("The updated current position of V5 is: ");
     Serial.println(currentPositionFromHomeV5);
   }
-
   v7ConvAfrV73 = lamd->getAF();
   halSensorConRpmV8 = lamd->getRPM();
   display->show("Mode = Run", 0);
@@ -285,6 +290,8 @@ float Stepper::getMotorCurrent()
 bool Stepper::overCurrentEvent() 
 {
   float current_mA = getMotorCurrent();
+  Serial.print("over current is :");
+  Serial.println(current_mA);
   if (current_mA > MAX_DRIVER_CURRENT_V16)
   {
     overCurrentV17 = true;
@@ -298,7 +305,8 @@ bool Stepper::overCurrentEvent()
 
 bool Stepper::outOfRangEvent()
 {
-  if (currentPositionFromHomeV5 < CLOCKWISE_STEP_FROM_HOME_V3 || currentPositionFromHomeV5 > MAX_NUMB_STEP_FROM_HOME_V4)
+
+  if (currentPositionFromHomeV5 < CLOCKWISE_STEP_FROM_HOME_V3 * 0 || currentPositionFromHomeV5 > MAX_NUMB_STEP_FROM_HOME_V4)
   {
     overRatingV18 = true;
   }
