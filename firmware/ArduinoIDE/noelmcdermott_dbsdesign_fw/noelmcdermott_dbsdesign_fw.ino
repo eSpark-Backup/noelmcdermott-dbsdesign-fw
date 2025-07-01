@@ -28,7 +28,7 @@ Button mode(MODE_SELECT_V12);
 void lambdaTask(void *parameter){
   while(true){
     lamda.LambdaSetup();
-    vTaskDelay(10);
+    vTaskDelay(1);
   }
 }
 
