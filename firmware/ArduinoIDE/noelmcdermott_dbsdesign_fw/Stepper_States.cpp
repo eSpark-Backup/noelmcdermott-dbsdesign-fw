@@ -218,7 +218,13 @@ void Stepper::run()
     Serial.println(stepsToMove);
     currentPositionFromHomeV5 = targetPos;
     /* Display the result*/
-    if (Stepper::outOfRangEvent() == 0)
+
+    digitalWrite(DIR_PIN, (stepsToMove > 0) ? LOW : HIGH);
+    runStepper(ROTATION_SPEED_STEP_PR_SEC_V6, abs(stepsToMove));
+    Serial.print("The updated current position of V5 is: ");
+    Serial.println(currentPositionFromHomeV5);
+  }
+      if (Stepper::outOfRangEvent() == 0)
     {
       outOfRange();
     }
@@ -226,11 +232,6 @@ void Stepper::run()
     {
       inRange();
     }
-    digitalWrite(DIR_PIN, (stepsToMove > 0) ? LOW : HIGH);
-    runStepper(ROTATION_SPEED_STEP_PR_SEC_V6, abs(stepsToMove));
-    Serial.print("The updated current position of V5 is: ");
-    Serial.println(currentPositionFromHomeV5);
-  }
   v7ConvAfrV73 = lamd->getAF();
   halSensorConRpmV8 = lamd->getRPM();
   display->show("Mode = Run", 0);
