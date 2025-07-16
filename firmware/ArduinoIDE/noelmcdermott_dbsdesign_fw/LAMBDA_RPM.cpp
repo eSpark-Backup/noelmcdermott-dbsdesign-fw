@@ -71,3 +71,8 @@ float Lambda::getAF()
 { 
   return AFRVal;
 }
+
+bool Lambda::getState()
+{
+  return Status == "Measuring";
+}

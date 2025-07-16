@@ -16,6 +16,7 @@ public:
   int getRPM();
   float getAF();
   void LambdaSetup();
+  bool getState();
 
 private:
   int    rpmValue = 0;

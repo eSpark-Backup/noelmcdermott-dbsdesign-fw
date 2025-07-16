@@ -32,10 +32,22 @@ void lambdaTask(void *parameter){
   }
 }
 
+// void heatingUpO2Sensor()
+// {
+//   lastcounttime = millis();
+//   while (millis() - lastcounttime <= INITIAL_DELAY)
+//   {
+//     lamda.LambdaSetup();
+//     Led.O2StatusLED();
+//     Serial.print("Counting time: ");
+//     Serial.println(millis() - lastcounttime);
+//   }
+// }
+
 void heatingUpO2Sensor()
 {
-  lastcounttime = millis();
-  while (millis() - lastcounttime <= INITIAL_DELAY)
+ 
+  while (lamda.getState() == false)
   {
     lamda.LambdaSetup();
     Led.O2StatusLED();
