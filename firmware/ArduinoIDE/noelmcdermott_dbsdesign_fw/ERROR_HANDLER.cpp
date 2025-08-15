@@ -8,6 +8,8 @@
 /*third implmentations*/
 volatile bool buttonPressed = false;
 
+int DoublePressCount = 0;
+
 /*ISR */
 void buttonPressISR()
 {
@@ -40,6 +42,7 @@ bool ErrorHandler::checkResetButton(int pin)
     {
       Serial.println("Double press detected. Press count: TRUE ");
       ErrorHandler::lastPressTime = 0;
+      DoublePressCount = 2;
       return false;
     }
     else
@@ -47,6 +50,7 @@ bool ErrorHandler::checkResetButton(int pin)
       // First press in sequence
       Serial.println("Single press detected.");
       lastPressTime = currentTime;
+
       return true;
     }
   }

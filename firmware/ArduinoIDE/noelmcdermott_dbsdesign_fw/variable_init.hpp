@@ -41,3 +41,4 @@ extern int   positionV2_2;
 extern float v7ConvAfrV73;
 extern float convVoltageV14;
 extern float convCurrentV14;
+extern int DoublePressCount;

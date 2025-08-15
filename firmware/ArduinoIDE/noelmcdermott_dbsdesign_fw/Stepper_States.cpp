@@ -4,6 +4,7 @@
 
 Conversion converter;
 volatile bool modeTriggered = false;
+static bool testModeActive = false;
 
 static void generateTone(int pin, int frequency, int duration)
 {
@@ -95,6 +96,7 @@ void Stepper::setEncoderButtonState(bool state)
 void Stepper::test()
 {
   modeTriggered = false;
+  testModeActive = false;
   ENCODER_VAL_IN_VOLT_V13 = MIN_VOLT_V14;
   if (halSensorConRpmV8 > 0)
   {
@@ -107,8 +109,12 @@ void Stepper::test()
     ENCODER_VAL_IN_VOLT_V13 = encoder.getEncoderVoltage();
   }
 
-  if(errorHand->checkResetButton(RESET_V9) == false)
+  if(errorHand->checkResetButton(RESET_V9) == false || DoublePressCount == 2)
   {
+    testModeActive = true;
+  }
+
+  if(testModeActive){ 
     encoder.button_state = 1;
     digitalWrite(KILL_RELAY_V10, LOW);
     stopTone(BUZZER_PIN);
@@ -118,7 +124,8 @@ void Stepper::test()
 
     v7ConvAfrV73 = lamd->getAF();
     halSensorConRpmV8 = lamd->getRPM();
-
+    
+    // ENCODER_VAL_IN_VOLT_V13 = encoder.getEncoderVoltage();
     /*Display*/
     display->clear();
     display->show("Mode = TEST", 0);
@@ -161,6 +168,7 @@ void Stepper::test()
     }
     delay(300);
     display->clear();
+  
   }
   else
   {
@@ -201,7 +209,8 @@ void Stepper::test()
 
 /*RUN MODE*/
 void Stepper::run()
-{
+{ 
+  DoublePressCount = 0;
   convVoltageV14 = converter.readExternalInput(Conversion::Scale::Voltage);
   int targetPos= map(convVoltageV14 * 1000, MIN_VOLT_V14, MAX_VOLT_V14 * 1000, CLOCKWISE_STEP_FROM_HOME_V3, MAX_NUMB_STEP_FROM_HOME_V4);
   Serial.print("Target Positions:");
