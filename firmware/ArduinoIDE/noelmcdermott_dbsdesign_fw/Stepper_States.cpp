@@ -156,15 +156,21 @@ void Stepper::test()
 
     if (Stepper::outOfRangEvent())
     {
-      digitalWrite(KILL_RELAY_V10, LOW);
-      digitalWrite(TEST_LED, LOW);       
-      digitalWrite(GREEN_LED, HIGH);     
+      // digitalWrite(KILL_RELAY_V10, LOW);
+      // digitalWrite(TEST_LED, LOW);       
+      // digitalWrite(GREEN_LED, HIGH); 
+      digitalWrite(KILL_RELAY_V10, HIGH);
+      digitalWrite(TEST_LED, HIGH);     
+      digitalWrite(GREEN_LED, LOW);      
     }
     else
     {
-      digitalWrite(KILL_RELAY_V10, HIGH);
-      digitalWrite(TEST_LED, HIGH);     
-      digitalWrite(GREEN_LED, LOW);     
+      digitalWrite(KILL_RELAY_V10, LOW);
+      digitalWrite(TEST_LED, LOW);       
+      digitalWrite(GREEN_LED, HIGH); 
+      // digitalWrite(KILL_RELAY_V10, HIGH);
+      // digitalWrite(TEST_LED, HIGH);     
+      // digitalWrite(GREEN_LED, LOW);     
     }
     delay(300);
     display->clear();
