@@ -16,7 +16,7 @@ float Conversion::current_mA()
 
 float Conversion::voltage_V()
 {
-  // uint16_t sensorValue = analogRead(EXTERNAL_INPUT);
+  uint16_t sensorValue = analogRead(EXTERNAL_INPUT);
   uint16_t sensorValue = 2048;
   // Map the sensor value from 0 (819) to 3.3 (4095) range
   float voltage = map(sensorValue, minADCValue, maxADCValue, 0, 3300) / 1000.0f;
